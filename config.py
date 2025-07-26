@@ -14,7 +14,7 @@ class Config:
     """إعدادات التطبيق الأساسية"""
     
     # إعدادات Flask الأساسية
-    SECRET_KEY = os.environ.get('SECRET_KEY') or '24/05/2007'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-key'
     DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
     
     # إعدادات قاعدة البيانات
