@@ -1,0 +1,686 @@
+{% extends "base.html" %}
+
+{% block title %}إحصائياتي التفصيلية - لعبة المافيا{% endblock %}
+
+{% block body_class %}stats-page{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 mb-2">
+                        <i class="fas fa-chart-bar text-primary"></i>
+                        إحصائياتي التفصيلية
+                    </h1>
+                    <p class="text-muted">تتبع أداءك وتقدمك في لعبة المافيا</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary" onclick="exportStats()">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="refreshStats()">
+                        <i class="fas fa-sync-alt"></i> تحديث
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الإحصائيات العامة -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-primary">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="totalGames">0</div>
+                    <div class="stat-label">إجمالي الألعاب</div>
+                    <div class="stat-change positive">+0 هذا الأسبوع</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-success">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="winRate">0%</div>
+                    <div class="stat-label">معدل الفوز</div>
+                    <div class="stat-change positive">+0% من الشهر الماضي</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-info">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="playtime">0</div>
+                    <div class="stat-label">ساعات اللعب</div>
+                    <div class="stat-change neutral">متوسط 0 ساعة/يوم</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-warning">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="ranking">-</div>
+                    <div class="stat-label">الترتيب العام</div>
+                    <div class="stat-change neutral">من أصل 0 لاعب</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- الرسوم البيانية -->
+        <div class="col-lg-8">
+            <!-- أداء الأسابيع الأخيرة -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line"></i> أداء الأسابيع الأخيرة</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="performanceChart" height="100"></canvas>
+                </div>
+            </div>
+
+            <!-- توزيع الأدوار -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-pie-chart"></i> توزيع الأدوار</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="rolesChart" height="100"></canvas>
+                </div>
+            </div>
+
+            <!-- إحصائيات تفصيلية -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-list-alt"></i> الإحصائيات التفصيلية</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>الإحصائية</th>
+                                    <th>القيمة</th>
+                                    <th>المتوسط العام</th>
+                                    <th>المقارنة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><i class="fas fa-gamepad text-primary"></i> ألعاب مكتملة</td>
+                                    <td><span id="completedGames">0</span></td>
+                                    <td>15.4</td>
+                                    <td><span class="badge bg-secondary">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-trophy text-success"></i> ألعاب فائزة</td>
+                                    <td><span id="wonGames">0</span></td>
+                                    <td>7.8</td>
+                                    <td><span class="badge bg-secondary">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-skull text-danger"></i> ألعاب خاسرة</td>
+                                    <td><span id="lostGames">0</span></td>
+                                    <td>7.6</td>
+                                    <td><span class="badge bg-secondary">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-comments text-info"></i> رسائل مرسلة</td>
+                                    <td><span id="messagesSent">0</span></td>
+                                    <td>234.2</td>
+                                    <td><span class="badge bg-secondary">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-vote-yea text-warning"></i> أصوات مُدلى بها</td>
+                                    <td><span id="votesCast">0</span></td>
+                                    <td>42.1</td>
+                                    <td><span class="badge bg-secondary">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-crosshairs text-dark"></i> أصوات مستلمة</td>
+                                    <td><span id="votesReceived">0</span></td>
+                                    <td>38.7</td>
+                                    <td><span class="badge bg-secondary">-</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الشريط الجانبي -->
+        <div class="col-lg-4">
+            <!-- أفضل الأدوار -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-mask"></i> أفضل الأدوار</h6>
+                </div>
+                <div class="card-body">
+                    <div id="bestRoles">
+                        <div class="text-center">
+                            <i class="fas fa-theater-masks text-muted" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2 mb-0">لا توجد بيانات كافية</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الإنجازات الأخيرة -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-trophy"></i> الإنجازات الأخيرة</h6>
+                </div>
+                <div class="card-body">
+                    <div id="recentAchievements">
+                        <div class="text-center">
+                            <i class="fas fa-medal text-muted" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2 mb-0">لم تحصل على إنجازات بعد</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- إحصائيات الوقت -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-calendar-alt"></i> إحصائيات الوقت</h6>
+                </div>
+                <div class="card-body">
+                    <div class="time-stat-item">
+                        <div class="d-flex justify-content-between">
+                            <span>اليوم</span>
+                            <span class="fw-bold" id="todayPlaytime">0 دقيقة</span>
+                        </div>
+                    </div>
+                    <div class="time-stat-item">
+                        <div class="d-flex justify-content-between">
+                            <span>هذا الأسبوع</span>
+                            <span class="fw-bold" id="weekPlaytime">0 ساعة</span>
+                        </div>
+                    </div>
+                    <div class="time-stat-item">
+                        <div class="d-flex justify-content-between">
+                            <span>هذا الشهر</span>
+                            <span class="fw-bold" id="monthPlaytime">0 ساعة</span>
+                        </div>
+                    </div>
+                    <div class="time-stat-item">
+                        <div class="d-flex justify-content-between">
+                            <span>الإجمالي</span>
+                            <span class="fw-bold" id="totalPlaytime">0 ساعة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- مقارنات -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-users"></i> مقارنة مع الأصدقاء</h6>
+                </div>
+                <div class="card-body">
+                    <div class="comparison-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>معدل الفوز</span>
+                            <div>
+                                <span class="me-2">0%</span>
+                                <span class="badge bg-secondary">المرتبة -</span>
+                            </div>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>إجمالي الألعاب</span>
+                            <div>
+                                <span class="me-2">0</span>
+                                <span class="badge bg-secondary">المرتبة -</span>
+                            </div>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar bg-info" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>ساعات اللعب</span>
+                            <div>
+                                <span class="me-2">0</span>
+                                <span class="badge bg-secondary">المرتبة -</span>
+                            </div>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar bg-warning" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.stats-page {
+    background: #f8f9fa;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    margin-left: 1rem;
+    flex-shrink: 0;
+}
+
+.stat-content {
+    flex-grow: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: #2c3e50;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-change {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.stat-change.positive {
+    color: #28a745;
+}
+
+.stat-change.negative {
+    color: #dc3545;
+}
+
+.stat-change.neutral {
+    color: #6c757d;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.time-stat-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.time-stat-item:last-child {
+    border-bottom: none;
+}
+
+.comparison-item {
+    margin-bottom: 1.5rem;
+}
+
+.comparison-item:last-child {
+    margin-bottom: 0;
+}
+
+.progress {
+    height: 6px;
+    background-color: #f8f9fa;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+    background-color: #f8f9fa;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* تحسين الاستجابة */
+@media (max-width: 768px) {
+    .display-5 {
+        font-size: 1.8rem;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+    }
+    
+    .stat-icon {
+        margin: 0 0 1rem 0;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Animation للعناصر */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card, .card {
+    animation: fadeInUp 0.6s ease;
+}
+
+/* Loading state */
+.loading {
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Chart containers */
+#performanceChart, #rolesChart {
+    max-width: 100%;
+    height: auto !important;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadStats();
+    initializeCharts();
+});
+
+// تحميل الإحصائيات
+function loadStats() {
+    // محاكاة تحميل البيانات من API
+    setTimeout(() => {
+        // بيانات وهمية للتجربة
+        updateStatsDisplay({
+            totalGames: 0,
+            winRate: 0,
+            playtime: 0,
+            ranking: '-',
+            completedGames: 0,
+            wonGames: 0,
+            lostGames: 0,
+            messagesSent: 0,
+            votesCast: 0,
+            votesReceived: 0
+        });
+    }, 1000);
+}
+
+// تحديث عرض الإحصائيات
+function updateStatsDisplay(stats) {
+    document.getElementById('totalGames').textContent = stats.totalGames;
+    document.getElementById('winRate').textContent = stats.winRate + '%';
+    document.getElementById('playtime').textContent = stats.playtime;
+    document.getElementById('ranking').textContent = stats.ranking;
+    document.getElementById('completedGames').textContent = stats.completedGames;
+    document.getElementById('wonGames').textContent = stats.wonGames;
+    document.getElementById('lostGames').textContent = stats.lostGames;
+    document.getElementById('messagesSent').textContent = stats.messagesSent;
+    document.getElementById('votesCast').textContent = stats.votesCast;
+    document.getElementById('votesReceived').textContent = stats.votesReceived;
+    
+    // تحديث إحصائيات الوقت
+    document.getElementById('todayPlaytime').textContent = '0 دقيقة';
+    document.getElementById('weekPlaytime').textContent = '0 ساعة';
+    document.getElementById('monthPlaytime').textContent = '0 ساعة';
+    document.getElementById('totalPlaytime').textContent = stats.playtime + ' ساعة';
+}
+
+// تهيئة الرسوم البيانية
+function initializeCharts() {
+    initializePerformanceChart();
+    initializeRolesChart();
+}
+
+// رسم بياني للأداء
+function initializePerformanceChart() {
+    const ctx = document.getElementById('performanceChart');
+    if (!ctx) return;
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4', 'الأسبوع 5', 'الأسبوع 6'],
+            datasets: [{
+                label: 'معدل الفوز (%)',
+                data: [0, 0, 0, 0, 0, 0],
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'عدد الألعاب',
+                data: [0, 0, 0, 0, 0, 0],
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                tension: 0.4,
+                fill: true,
+                yAxisID: 'y1'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'معدل الفوز (%)'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'عدد الألعاب'
+                    },
+                    grid: {
+                        drawOnChartArea: false,
+                    },
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            }
+        }
+    });
+}
+
+// رسم بياني للأدوار
+function initializeRolesChart() {
+    const ctx = document.getElementById('rolesChart');
+    if (!ctx) return;
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['مواطن', 'مافيا', 'طبيب', 'محقق', 'أخرى'],
+            datasets: [{
+                data: [0, 0, 0, 0, 0],
+                backgroundColor: [
+                    '#007bff',
+                    '#dc3545',
+                    '#28a745',
+                    '#ffc107',
+                    '#6c757d'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// تصدير الإحصائيات
+function exportStats() {
+    // محاكاة تصدير البيانات
+    showNotification('جاري تحضير ملف الإحصائيات...', 'info');
+    
+    setTimeout(() => {
+        showNotification('تم تصدير الإحصائيات بنجاح', 'success');
+    }, 2000);
+}
+
+// تحديث الإحصائيات
+function refreshStats() {
+    showNotification('جاري تحديث الإحصائيات...', 'info');
+    loadStats();
+    
+    setTimeout(() => {
+        showNotification('تم تحديث الإحصائيات', 'success');
+    }, 1500);
+}
+
+// عرض الإشعارات
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 100px; right: 20px; z-index: 1050; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

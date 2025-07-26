@@ -1,0 +1,816 @@
+{% extends "base.html" %}
+
+{% block title %}الغرف - لعبة المافيا{% endblock %}
+
+{% block body_class %}rooms-page{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">
+                                <i class="fas fa-door-open"></i> 
+                                الغرف المتاحة
+                            </h2>
+                            <p class="text-muted mb-0">
+                                اختر غرفة للانضمام إليها أو أنشئ غرفة جديدة
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success" onclick="showCreateRoomModal()">
+                                    <i class="fas fa-plus"></i> أنشئ غرفة
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="showJoinRoomModal()">
+                                    <i class="fas fa-sign-in-alt"></i> انضم برمز
+                                </button>
+                                <button type="button" class="btn btn-info" onclick="refreshRooms()">
+                                    <i class="fas fa-sync"></i> تحديث
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- فلاتر البحث -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <label class="form-label">البحث:</label>
+                            <input type="text" class="form-control" id="searchInput" 
+                                   placeholder="ابحث في أسماء الغرف...">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">الحالة:</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="">جميع الحالات</option>
+                                <option value="waiting">في الانتظار</option>
+                                <option value="playing">جارية</option>
+                                <option value="full">ممتلئة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">عدد اللاعبين:</label>
+                            <select class="form-select" id="playersFilter">
+                                <option value="">أي عدد</option>
+                                <option value="4-6">4-6 لاعبين</option>
+                                <option value="7-10">7-10 لاعبين</option>
+                                <option value="11-20">11-20 لاعب</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">الدردشة الصوتية:</label>
+                            <select class="form-select" id="voiceFilter">
+                                <option value="">غير محدد</option>
+                                <option value="true">مفعلة</option>
+                                <option value="false">معطلة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">الترتيب:</label>
+                            <select class="form-select" id="sortBy">
+                                <option value="created">الأحدث</option>
+                                <option value="players">عدد اللاعبين</option>
+                                <option value="name">الاسم</option>
+                                <option value="status">الحالة</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- قائمة الغرف -->
+    <div class="row" id="roomsList">
+        <!-- سيتم تحميل الغرف هنا -->
+        <div class="col-12 text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">جاري تحميل الغرف...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- رسالة في حالة عدم وجود غرف -->
+    <div class="row" id="noRoomsMessage" style="display: none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-door-closed text-muted" style="font-size: 4rem;"></i>
+                    <h4 class="mt-3 text-muted">لا توجد غرف متاحة</h4>
+                    <p class="text-muted">كن أول من ينشئ غرفة جديدة!</p>
+                    <button type="button" class="btn btn-success btn-lg" onclick="showCreateRoomModal()">
+                        <i class="fas fa-plus"></i> أنشئ أول غرفة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal إنشاء غرفة -->
+<div class="modal fade" id="createRoomModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus"></i> أنشئ غرفة جديدة
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="createRoomForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="roomName" class="form-label">اسم الغرفة *</label>
+                            <input type="text" class="form-control" id="roomName" name="name" 
+                                   required maxlength="50" placeholder="أدخل اسم الغرفة">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="roomPassword" class="form-label">كلمة المرور</label>
+                            <input type="password" class="form-control" id="roomPassword" name="password" 
+                                   placeholder="اختياري">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="minPlayers" class="form-label">أقل عدد لاعبين</label>
+                            <select class="form-select" id="minPlayers" name="min_players">
+                                <option value="4" selected>4 لاعبين</option>
+                                <option value="5">5 لاعبين</option>
+                                <option value="6">6 لاعبين</option>
+                                <option value="7">7 لاعبين</option>
+                                <option value="8">8 لاعبين</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="maxPlayers" class="form-label">أكثر عدد لاعبين</label>
+                            <select class="form-select" id="maxPlayers" name="max_players">
+                                <option value="6">6 لاعبين</option>
+                                <option value="8" selected>8 لاعبين</option>
+                                <option value="10">10 لاعبين</option>
+                                <option value="12">12 لاعب</option>
+                                <option value="15">15 لاعب</option>
+                                <option value="20">20 لاعب</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="allowVoiceChat" 
+                                       name="allow_voice_chat" checked>
+                                <label class="form-check-label" for="allowVoiceChat">
+                                    <i class="fas fa-microphone"></i> السماح بالدردشة الصوتية
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="allowTextChat" 
+                                       name="allow_text_chat" checked disabled>
+                                <label class="form-check-label" for="allowTextChat">
+                                    <i class="fas fa-comments"></i> السماح بالدردشة النصية
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="autoStart" name="auto_start">
+                                <label class="form-check-label" for="autoStart">
+                                    <i class="fas fa-play"></i> بدء تلقائي عند اكتمال العدد
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="publicRoom" 
+                                       name="is_public" checked>
+                                <label class="form-check-label" for="publicRoom">
+                                    <i class="fas fa-globe"></i> غرفة عامة (ظاهرة للجميع)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>نصيحة:</strong> 
+                        الغرف التي تحتوي على كلمة مرور لن تظهر للعامة. 
+                        شارك الرمز مع أصدقائك للانضمام.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-plus"></i> إنشاء الغرفة
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal الانضمام برمز -->
+<div class="modal fade" id="joinRoomModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-sign-in-alt"></i> انضم برمز الغرفة
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="joinRoomForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="roomCode" class="form-label">رمز الغرفة *</label>
+                        <input type="text" class="form-control text-center" id="roomCode" name="room_code" 
+                               required maxlength="6" placeholder="ABC123" 
+                               style="font-size: 1.5rem; letter-spacing: 0.2rem;"
+                               oninput="this.value = this.value.toUpperCase()">
+                        <div class="form-text">أدخل الرمز المكون من 6 أحرف</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="joinRoomPassword" class="form-label">كلمة المرور</label>
+                        <input type="password" class="form-control" id="joinRoomPassword" name="password" 
+                               placeholder="إذا كانت الغرفة محمية بكلمة مرور">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> انضم
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Template للغرفة -->
+<template id="roomTemplate">
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card room-card h-100" onclick="joinRoom('{room_code}', '{has_password}')">
+            <div class="card-body">
+                <div class="room-status {status}">{status_text}</div>
+                
+                <h5 class="card-title mb-2">{name}</h5>
+                
+                <div class="room-info mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">
+                            <i class="fas fa-users"></i> اللاعبون:
+                        </span>
+                        <span class="badge bg-primary">{current_players}/{max_players}</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">
+                            <i class="fas fa-clock"></i> أُنشئت:
+                        </span>
+                        <span class="text-muted small">{created_ago}</span>
+                    </div>
+                    
+                    <div class="room-features">
+                        {voice_chat_icon}
+                        {password_icon}
+                        {ai_analysis_icon}
+                    </div>
+                </div>
+                
+                <div class="room-players">
+                    <small class="text-muted">اللاعبون:</small>
+                    <div class="players-avatars mt-1">
+                        {players_avatars}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">رمز: {room_code}</small>
+                    <div class="join-actions">
+                        {join_button}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.room-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #007bff;
+}
+
+.room-status {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 1;
+}
+
+.room-status.waiting {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+}
+
+.room-status.playing {
+    background: linear-gradient(45deg, #ffc107, #fd7e14);
+    color: #333;
+}
+
+.room-status.full {
+    background: linear-gradient(45deg, #dc3545, #e74c3c);
+    color: white;
+}
+
+.room-features {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.feature-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.feature-voice {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.feature-password {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.feature-ai {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.players-avatars {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.player-mini-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.join-actions {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.room-card:hover .join-actions {
+    opacity: 1;
+}
+
+.room-info .text-muted {
+    font-size: 0.9rem;
+}
+
+.search-highlight {
+    background: linear-gradient(45deg, #fff3cd, #ffeaa7);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let allRooms = [];
+let filteredRooms = [];
+
+// تحميل الغرف عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    loadRooms();
+    setupFilters();
+    
+    // تحديث الغرف كل 15 ثانية
+    setInterval(loadRooms, 15000);
+});
+
+// تحميل الغرف من الخادم
+async function loadRooms() {
+    try {
+        const response = await fetch('/api/room/list');
+        const data = await response.json();
+        
+        if (data.success) {
+            allRooms = data.rooms;
+            applyFilters();
+        } else {
+            showError('فشل في تحميل الغرف: ' + data.message);
+        }
+    } catch (error) {
+        showError('خطأ في الاتصال بالخادم');
+    }
+}
+
+// تطبيق الفلاتر
+function applyFilters() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value;
+    const playersFilter = document.getElementById('playersFilter').value;
+    const voiceFilter = document.getElementById('voiceFilter').value;
+    const sortBy = document.getElementById('sortBy').value;
+    
+    filteredRooms = allRooms.filter(room => {
+        // فلتر البحث
+        if (searchTerm && !room.name.toLowerCase().includes(searchTerm)) {
+            return false;
+        }
+        
+        // فلتر الحالة
+        if (statusFilter && room.status !== statusFilter) {
+            return false;
+        }
+        
+        // فلتر عدد اللاعبين
+        if (playersFilter) {
+            const [min, max] = playersFilter.split('-').map(Number);
+            if (room.max_players < min || room.max_players > max) {
+                return false;
+            }
+        }
+        
+        // فلتر الدردشة الصوتية
+        if (voiceFilter && room.allow_voice_chat.toString() !== voiceFilter) {
+            return false;
+        }
+        
+        return true;
+    });
+    
+    // ترتيب النتائج
+    filteredRooms.sort((a, b) => {
+        switch (sortBy) {
+            case 'name':
+                return a.name.localeCompare(b.name);
+            case 'players':
+                return b.current_players - a.current_players;
+            case 'status':
+                return a.status.localeCompare(b.status);
+            case 'created':
+            default:
+                return new Date(b.created_at) - new Date(a.created_at);
+        }
+    });
+    
+    displayRooms();
+}
+
+// عرض الغرف
+function displayRooms() {
+    const roomsList = document.getElementById('roomsList');
+    const noRoomsMessage = document.getElementById('noRoomsMessage');
+    
+    if (filteredRooms.length === 0) {
+        roomsList.style.display = 'none';
+        noRoomsMessage.style.display = 'block';
+        return;
+    }
+    
+    roomsList.style.display = 'flex';
+    noRoomsMessage.style.display = 'none';
+    
+    const template = document.getElementById('roomTemplate');
+    roomsList.innerHTML = '';
+    
+    filteredRooms.forEach(room => {
+        const roomElement = createRoomElement(room, template);
+        roomsList.appendChild(roomElement);
+    });
+}
+
+// إنشاء عنصر الغرفة
+function createRoomElement(room, template) {
+    let html = template.innerHTML;
+    
+    // استبدال المتغيرات
+    html = html.replace(/{name}/g, highlightSearch(room.name));
+    html = html.replace(/{room_code}/g, room.room_code);
+    html = html.replace(/{current_players}/g, room.current_players);
+    html = html.replace(/{max_players}/g, room.max_players);
+    html = html.replace(/{status}/g, room.status);
+    html = html.replace(/{has_password}/g, room.has_password);
+    
+    // حالة الغرفة
+    const statusTexts = {
+        'waiting': 'في الانتظار',
+        'playing': 'جارية',
+        'full': 'ممتلئة'
+    };
+    html = html.replace(/{status_text}/g, statusTexts[room.status] || room.status);
+    
+    // وقت الإنشاء
+    html = html.replace(/{created_ago}/g, getTimeAgo(room.created_at));
+    
+    // الميزات
+    let features = '';
+    if (room.allow_voice_chat) {
+        features += '<span class="feature-badge feature-voice"><i class="fas fa-microphone"></i> صوت</span>';
+    }
+    if (room.has_password) {
+        features += '<span class="feature-badge feature-password"><i class="fas fa-lock"></i> محمية</span>';
+    }
+    if (room.ai_analysis_enabled) {
+        features += '<span class="feature-badge feature-ai"><i class="fas fa-brain"></i> AI</span>';
+    }
+    
+    html = html.replace(/{voice_chat_icon}/g, features);
+    html = html.replace(/{password_icon}/g, '');
+    html = html.replace(/{ai_analysis_icon}/g, '');
+    
+    // أفاتار اللاعبين
+    let playersAvatars = '';
+    if (room.players && room.players.length > 0) {
+        room.players.slice(0, 6).forEach(player => {
+            playersAvatars += `<div class="player-mini-avatar" title="${player.display_name}">${player.display_name[0]}</div>`;
+        });
+        if (room.players.length > 6) {
+            playersAvatars += `<div class="player-mini-avatar">+${room.players.length - 6}</div>`;
+        }
+    }
+    html = html.replace(/{players_avatars}/g, playersAvatars);
+    
+    // زر الانضمام
+    let joinButton = '';
+    if (room.status === 'waiting' && room.current_players < room.max_players) {
+        joinButton = `<button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); joinRoom('${room.room_code}', ${room.has_password})">
+            <i class="fas fa-sign-in-alt"></i> انضم
+        </button>`;
+    } else if (room.status === 'playing') {
+        joinButton = '<span class="badge bg-warning">جارية</span>';
+    } else if (room.status === 'full') {
+        joinButton = '<span class="badge bg-danger">ممتلئة</span>';
+    }
+    html = html.replace(/{join_button}/g, joinButton);
+    
+    // إنشاء العنصر
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.firstElementChild;
+}
+
+// إبراز نتائج البحث
+function highlightSearch(text) {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    if (!searchTerm) return text;
+    
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return text.replace(regex, '<span class="search-highlight">$1</span>');
+}
+
+// حساب الوقت المنقضي
+function getTimeAgo(dateString) {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diff = Math.floor((now - date) / 1000);
+    
+    if (diff < 60) return 'الآن';
+    if (diff < 3600) return `${Math.floor(diff / 60)} دقيقة`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} ساعة`;
+    return `${Math.floor(diff / 86400)} يوم`;
+}
+
+// إعداد الفلاتر
+function setupFilters() {
+    const filters = ['searchInput', 'statusFilter', 'playersFilter', 'voiceFilter', 'sortBy'];
+    
+    filters.forEach(filterId => {
+        const element = document.getElementById(filterId);
+        element.addEventListener('input', applyFilters);
+        element.addEventListener('change', applyFilters);
+    });
+    
+    // تأخير البحث
+    const searchInput = document.getElementById('searchInput');
+    let searchTimeout;
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(applyFilters, 300);
+    });
+}
+
+// إظهار modal إنشاء غرفة
+function showCreateRoomModal() {
+    const modal = new bootstrap.Modal(document.getElementById('createRoomModal'));
+    modal.show();
+    
+    // التركيز على اسم الغرفة
+    setTimeout(() => {
+        document.getElementById('roomName').focus();
+    }, 500);
+}
+
+// إظهار modal الانضمام برمز
+function showJoinRoomModal() {
+    const modal = new bootstrap.Modal(document.getElementById('joinRoomModal'));
+    modal.show();
+    
+    // التركيز على رمز الغرفة
+    setTimeout(() => {
+        document.getElementById('roomCode').focus();
+    }, 500);
+}
+
+// إنشاء غرفة
+document.getElementById('createRoomForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const roomData = {
+        name: formData.get('name'),
+        min_players: parseInt(formData.get('min_players')),
+        max_players: parseInt(formData.get('max_players')),
+        password: formData.get('password') || null,
+        allow_voice_chat: formData.get('allow_voice_chat') === 'on',
+        allow_text_chat: formData.get('allow_text_chat') === 'on',
+        auto_start: formData.get('auto_start') === 'on',
+        is_public: formData.get('is_public') === 'on'
+    };
+    
+    // تحقق من صحة البيانات
+    if (roomData.min_players > roomData.max_players) {
+        window.mafiaGame.showNotification('أقل عدد لاعبين لا يمكن أن يكون أكبر من أكثر عدد', 'danger');
+        return;
+    }
+    
+    window.mafiaGame.showLoading('جاري إنشاء الغرفة...');
+    
+    try {
+        const response = await fetch('/api/room/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(roomData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.mafiaGame.showNotification('تم إنشاء الغرفة بنجاح!', 'success');
+            
+            // إخفاء الـ modal
+            bootstrap.Modal.getInstance(document.getElementById('createRoomModal')).hide();
+            
+            // الانتقال للغرفة
+            setTimeout(() => {
+                window.location.href = `/game/${result.room.room_code}`;
+            }, 1000);
+        } else {
+            window.mafiaGame.showNotification(result.message, 'danger');
+        }
+    } catch (error) {
+        window.mafiaGame.showNotification('خطأ في إنشاء الغرفة', 'danger');
+    } finally {
+        window.mafiaGame.hideLoading();
+    }
+});
+
+// الانضمام برمز
+document.getElementById('joinRoomForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const joinData = {
+        room_code: formData.get('room_code').toUpperCase(),
+        password: formData.get('password') || null
+    };
+    
+    await joinRoomByCode(joinData.room_code, joinData.password);
+});
+
+// الانضمام للغرفة
+async function joinRoom(roomCode, hasPassword) {
+    if (hasPassword === 'true' || hasPassword === true) {
+        // إظهار modal إدخال كلمة المرور
+        document.getElementById('roomCode').value = roomCode;
+        showJoinRoomModal();
+    } else {
+        await joinRoomByCode(roomCode, null);
+    }
+}
+
+// الانضمام للغرفة بالرمز
+async function joinRoomByCode(roomCode, password) {
+    window.mafiaGame.showLoading('جاري الانضمام للغرفة...');
+    
+    try {
+        const response = await fetch('/api/room/join', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ room_code: roomCode, password: password })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.mafiaGame.showNotification('تم الانضمام للغرفة بنجاح!', 'success');
+            
+            // إخفاء أي modal مفتوح
+            const openModal = document.querySelector('.modal.show');
+            if (openModal) {
+                bootstrap.Modal.getInstance(openModal).hide();
+            }
+            
+            // الانتقال للعبة
+            setTimeout(() => {
+                window.location.href = `/game/${roomCode}`;
+            }, 1000);
+        } else {
+            window.mafiaGame.showNotification(result.message, 'danger');
+        }
+    } catch (error) {
+        window.mafiaGame.showNotification('خطأ في الانضمام للغرفة', 'danger');
+    } finally {
+        window.mafiaGame.hideLoading();
+    }
+}
+
+// تحديث الغرف
+function refreshRooms() {
+    window.mafiaGame.showNotification('جاري تحديث الغرف...', 'info', 2000);
+    loadRooms();
+}
+
+// إظهار رسالة خطأ
+function showError(message) {
+    document.getElementById('roomsList').innerHTML = `
+        <div class="col-12">
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                ${message}
+                <button class="btn btn-sm btn-outline-danger ms-2" onclick="loadRooms()">
+                    <i class="fas fa-sync"></i> إعادة المحاولة
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// تعديل حد عدد اللاعبين عند تغيير الحد الأدنى
+document.getElementById('minPlayers').addEventListener('change', function() {
+    const maxPlayersSelect = document.getElementById('maxPlayers');
+    const minValue = parseInt(this.value);
+    
+    // تأكد أن الحد الأقصى لا يقل عن الحد الأدنى
+    if (parseInt(maxPlayersSelect.value) < minValue) {
+        maxPlayersSelect.value = minValue;
+    }
+    
+    // تعطيل الخيارات الأقل من الحد الأدنى
+    Array.from(maxPlayersSelect.options).forEach(option => {
+        option.disabled = parseInt(option.value) < minValue;
+    });
+});
+</script>
+{% endblock %}

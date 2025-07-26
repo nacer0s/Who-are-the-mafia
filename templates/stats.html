@@ -1,0 +1,723 @@
+{% extends "base.html" %}
+
+{% block title %}الإحصائيات العامة - لعبة المافيا{% endblock %}
+
+{% block body_class %}stats-page{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">
+                                <i class="fas fa-chart-bar text-primary"></i>
+                                الإحصائيات العامة
+                            </h2>
+                            <p class="text-muted mb-0">
+                                اكتشف أرقام وإحصائيات مثيرة من عالم لعبة المافيا
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group">
+                                <button class="btn btn-outline-primary" id="refreshStats">
+                                    <i class="fas fa-sync"></i> تحديث
+                                </button>
+                                <button class="btn btn-outline-info" onclick="exportStats()">
+                                    <i class="fas fa-download"></i> تصدير
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الإحصائيات الرئيسية -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-primary">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">إجمالي اللاعبين</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up text-success"></i>
+                        <span id="usersGrowth">+0</span> هذا الأسبوع
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-success">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="totalGames">0</div>
+                    <div class="stat-label">إجمالي الألعاب</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up text-success"></i>
+                        <span id="gamesGrowth">+0</span> اليوم
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-info">
+                    <i class="fas fa-door-open"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="activeRooms">0</div>
+                    <div class="stat-label">الغرف النشطة</div>
+                    <div class="stat-change">
+                        <i class="fas fa-circle text-success"></i>
+                        <span>متاحة الآن</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-warning">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="totalPlaytime">0</div>
+                    <div class="stat-label">ساعات اللعب</div>
+                    <div class="stat-change">
+                        <i class="fas fa-chart-line text-info"></i>
+                        <span>إجمالي</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- الرسوم البيانية -->
+        <div class="col-lg-8 mb-4">
+            <!-- رسم بياني للألعاب -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line"></i> الألعاب خلال الأسبوع الماضي</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="gamesChart" height="100"></canvas>
+                </div>
+            </div>
+
+            <!-- رسم بياني للاعبين النشطين -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-users"></i> اللاعبون النشطون</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="playersChart" height="100"></canvas>
+                </div>
+            </div>
+
+            <!-- إحصائيات الأدوار -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-mask"></i> إحصائيات الأدوار</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <canvas id="rolesChart" height="200"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="roles-stats">
+                                <div class="role-stat-item">
+                                    <div class="role-icon civilian">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="role-info">
+                                        <div class="role-name">مواطن</div>
+                                        <div class="role-stats">
+                                            <span class="win-rate">معدل الفوز: <strong id="civilianWinRate">0%</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="role-stat-item">
+                                    <div class="role-icon mafia">
+                                        <i class="fas fa-mask"></i>
+                                    </div>
+                                    <div class="role-info">
+                                        <div class="role-name">مافيا</div>
+                                        <div class="role-stats">
+                                            <span class="win-rate">معدل الفوز: <strong id="mafiaWinRate">0%</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="role-stat-item">
+                                    <div class="role-icon doctor">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <div class="role-info">
+                                        <div class="role-name">طبيب</div>
+                                        <div class="role-stats">
+                                            <span class="win-rate">معدل الفوز: <strong id="doctorWinRate">0%</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="role-stat-item">
+                                    <div class="role-icon detective">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <div class="role-info">
+                                        <div class="role-name">محقق</div>
+                                        <div class="role-stats">
+                                            <span class="win-rate">معدل الفوز: <strong id="detectiveWinRate">0%</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الشريط الجانبي -->
+        <div class="col-lg-4">
+            <!-- أفضل اللاعبين -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-trophy text-warning"></i> أفضل اللاعبين</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div id="topPlayersList">
+                        <!-- سيتم تحميل القائمة هنا -->
+                        <div class="p-3 text-center">
+                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                            <span class="ms-2">جاري التحميل...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- إحصائيات الذكاء الاصطناعي -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-brain text-info"></i> الذكاء الاصطناعي</h6>
+                </div>
+                <div class="card-body">
+                    <div class="ai-stat-item">
+                        <div class="d-flex justify-content-between">
+                            <span>الرسائل المحللة</span>
+                            <strong id="analyzedMessages">0</strong>
+                        </div>
+                    </div>
+                    <div class="ai-stat-item">
+                        <div class="d-flex justify-content-between">
+                            <span>الغش المكتشف</span>
+                            <strong class="text-danger" id="detectedCheats">0</strong>
+                        </div>
+                    </div>
+                    <div class="ai-stat-item">
+                        <div class="d-flex justify-content-between">
+                            <span>الرسائل الصوتية</span>
+                            <strong id="voiceMessages">0</strong>
+                        </div>
+                    </div>
+                    <div class="ai-stat-item">
+                        <div class="d-flex justify-content-between">
+                            <span>دقة التحليل</span>
+                            <strong class="text-success" id="analysisAccuracy">0%</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الأرقام القياسية -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-medal text-warning"></i> الأرقام القياسية</h6>
+                </div>
+                <div class="card-body">
+                    <div class="record-item">
+                        <div class="record-label">أطول لعبة:</div>
+                        <div class="record-value" id="longestGame">-- دقيقة</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">أكبر غرفة:</div>
+                        <div class="record-value" id="biggestRoom">-- لاعب</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">أسرع انتصار:</div>
+                        <div class="record-value" id="fastestWin">-- دقيقة</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">أكثر رسائل:</div>
+                        <div class="record-value" id="mostMessages">-- رسالة</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- إحصائيات اليوم -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-calendar-day text-primary"></i> اليوم</h6>
+                </div>
+                <div class="card-body">
+                    <div class="today-stat">
+                        <i class="fas fa-play text-success"></i>
+                        <span>ألعاب جديدة: <strong id="todayGames">0</strong></span>
+                    </div>
+                    <div class="today-stat">
+                        <i class="fas fa-user-plus text-info"></i>
+                        <span>لاعبون جدد: <strong id="todayUsers">0</strong></span>
+                    </div>
+                    <div class="today-stat">
+                        <i class="fas fa-comments text-warning"></i>
+                        <span>رسائل مرسلة: <strong id="todayMessages">0</strong></span>
+                    </div>
+                    <div class="today-stat">
+                        <i class="fas fa-clock text-muted"></i>
+                        <span>وقت اللعب: <strong id="todayPlaytime">0</strong> ساعة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* نفس الأنماط من dashboard.html للـ stat-card */
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin-left: 1rem;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.stat-change {
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 0.25rem;
+}
+
+.role-stat-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.role-stat-item:last-child {
+    border-bottom: none;
+}
+
+.role-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-left: 1rem;
+}
+
+.role-icon.civilian { background: #17a2b8; }
+.role-icon.mafia { background: #dc3545; }
+.role-icon.doctor { background: #28a745; }
+.role-icon.detective { background: #6f42c1; }
+
+.role-info {
+    flex: 1;
+}
+
+.role-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.role-stats {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.ai-stat-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.ai-stat-item:last-child {
+    border-bottom: none;
+}
+
+.record-item {
+    display: flex;
+    justify-content: between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.record-item:last-child {
+    border-bottom: none;
+}
+
+.record-label {
+    flex: 1;
+    color: #666;
+}
+
+.record-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.today-stat {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+    color: #666;
+}
+
+.today-stat i {
+    margin-left: 0.5rem;
+}
+
+.player-item-small {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.player-item-small:last-child {
+    border-bottom: none;
+}
+
+.player-rank {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-left: 0.75rem;
+}
+
+.player-rank.gold { background: linear-gradient(45deg, #ffd700, #ffb347); }
+.player-rank.silver { background: linear-gradient(45deg, #c0c0c0, #a8a8a8); }
+.player-rank.bronze { background: linear-gradient(45deg, #cd7f32, #b87333); }
+
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// المتغيرات العامة
+let gamesChart, playersChart, rolesChart;
+
+// تحميل البيانات عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    loadStatistics();
+    setupCharts();
+    
+    // تحديث كل دقيقة
+    setInterval(loadStatistics, 60000);
+});
+
+// تحميل الإحصائيات
+async function loadStatistics() {
+    try {
+        const response = await fetch('/api/stats/global');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateMainStats(data.platform);
+            updateTopPlayers(data.top_players);
+            updateAIStats(data.ai_stats);
+            updateRecords(data.records);
+            updateTodayStats(data.today);
+            updateCharts(data.charts);
+        }
+    } catch (error) {
+        console.error('خطأ في تحميل الإحصائيات:', error);
+    }
+}
+
+// تحديث الإحصائيات الرئيسية
+function updateMainStats(stats) {
+    document.getElementById('totalUsers').textContent = formatNumber(stats.total_users);
+    document.getElementById('totalGames').textContent = formatNumber(stats.total_games);
+    document.getElementById('activeRooms').textContent = formatNumber(stats.active_rooms);
+    document.getElementById('totalPlaytime').textContent = formatNumber(stats.total_playtime_hours);
+    
+    // النمو
+    document.getElementById('usersGrowth').textContent = `+${stats.users_growth || 0}`;
+    document.getElementById('gamesGrowth').textContent = `+${stats.games_growth || 0}`;
+}
+
+// تحديث أفضل اللاعبين
+function updateTopPlayers(players) {
+    const container = document.getElementById('topPlayersList');
+    
+    if (!players || players.length === 0) {
+        container.innerHTML = '<div class="p-3 text-center text-muted">لا توجد بيانات</div>';
+        return;
+    }
+    
+    let html = '';
+    players.slice(0, 10).forEach((player, index) => {
+        const rankClass = index === 0 ? 'gold' : (index === 1 ? 'silver' : (index === 2 ? 'bronze' : ''));
+        
+        html += `
+            <div class="player-item-small">
+                <div class="player-rank ${rankClass}">${index + 1}</div>
+                <div class="flex-1">
+                    <div class="fw-bold">${player.display_name}</div>
+                    <small class="text-muted">
+                        معدل الفوز: ${player.win_rate}% • ${player.total_games} لعبة
+                    </small>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// تحديث إحصائيات الذكاء الاصطناعي
+function updateAIStats(stats) {
+    if (!stats) return;
+    
+    document.getElementById('analyzedMessages').textContent = formatNumber(stats.analyzed_messages || 0);
+    document.getElementById('detectedCheats').textContent = formatNumber(stats.detected_cheats || 0);
+    document.getElementById('voiceMessages').textContent = formatNumber(stats.voice_messages || 0);
+    document.getElementById('analysisAccuracy').textContent = `${Math.round(stats.analysis_accuracy || 0)}%`;
+}
+
+// تحديث الأرقام القياسية
+function updateRecords(records) {
+    if (!records) return;
+    
+    document.getElementById('longestGame').textContent = `${records.longest_game || '--'} دقيقة`;
+    document.getElementById('biggestRoom').textContent = `${records.biggest_room || '--'} لاعب`;
+    document.getElementById('fastestWin').textContent = `${records.fastest_win || '--'} دقيقة`;
+    document.getElementById('mostMessages').textContent = `${records.most_messages || '--'} رسالة`;
+}
+
+// تحديث إحصائيات اليوم
+function updateTodayStats(stats) {
+    if (!stats) return;
+    
+    document.getElementById('todayGames').textContent = formatNumber(stats.games || 0);
+    document.getElementById('todayUsers').textContent = formatNumber(stats.new_users || 0);
+    document.getElementById('todayMessages').textContent = formatNumber(stats.messages || 0);
+    document.getElementById('todayPlaytime').textContent = formatNumber(stats.playtime_hours || 0);
+}
+
+// إعداد الرسوم البيانية
+function setupCharts() {
+    // رسم الألعاب
+    const gamesCtx = document.getElementById('gamesChart').getContext('2d');
+    gamesChart = new Chart(gamesCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'الألعاب',
+                data: [],
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // رسم اللاعبين
+    const playersCtx = document.getElementById('playersChart').getContext('2d');
+    playersChart = new Chart(playersCtx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'اللاعبون النشطون',
+                data: [],
+                backgroundColor: 'rgba(40, 167, 69, 0.8)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // رسم الأدوار
+    const rolesCtx = document.getElementById('rolesChart').getContext('2d');
+    rolesChart = new Chart(rolesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['مواطن', 'مافيا', 'طبيب', 'محقق', 'أخرى'],
+            datasets: [{
+                data: [0, 0, 0, 0, 0],
+                backgroundColor: [
+                    '#17a2b8',
+                    '#dc3545',
+                    '#28a745',
+                    '#6f42c1',
+                    '#ffc107'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+// تحديث الرسوم البيانية
+function updateCharts(chartsData) {
+    if (!chartsData) return;
+    
+    // تحديث رسم الألعاب
+    if (chartsData.games_per_day) {
+        gamesChart.data.labels = chartsData.games_per_day.labels;
+        gamesChart.data.datasets[0].data = chartsData.games_per_day.data;
+        gamesChart.update();
+    }
+    
+    // تحديث رسم اللاعبين
+    if (chartsData.active_players) {
+        playersChart.data.labels = chartsData.active_players.labels;
+        playersChart.data.datasets[0].data = chartsData.active_players.data;
+        playersChart.update();
+    }
+    
+    // تحديث رسم الأدوار
+    if (chartsData.roles_distribution) {
+        rolesChart.data.datasets[0].data = chartsData.roles_distribution.data;
+        rolesChart.update();
+        
+        // تحديث معدلات الفوز
+        const winRates = chartsData.roles_win_rates || {};
+        document.getElementById('civilianWinRate').textContent = `${Math.round(winRates.civilian || 0)}%`;
+        document.getElementById('mafiaWinRate').textContent = `${Math.round(winRates.mafia || 0)}%`;
+        document.getElementById('doctorWinRate').textContent = `${Math.round(winRates.doctor || 0)}%`;
+        document.getElementById('detectiveWinRate').textContent = `${Math.round(winRates.detective || 0)}%`;
+    }
+}
+
+// زر التحديث
+document.getElementById('refreshStats').addEventListener('click', function() {
+    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحديث...';
+    
+    loadStatistics().then(() => {
+        this.innerHTML = '<i class="fas fa-sync"></i> تحديث';
+        window.mafiaGame.showNotification('تم تحديث الإحصائيات', 'success');
+    });
+});
+
+// تصدير الإحصائيات
+function exportStats() {
+    // هنا يمكن إضافة منطق تصدير البيانات
+    window.mafiaGame.showNotification('ميزة التصدير قيد التطوير', 'info');
+}
+
+// تنسيق الأرقام
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    }
+    if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toString();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+
+{% block title %}لعبة المافيا - الصفحة الرئيسية{% endblock %}
+
+{% block body_class %}home-page{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="hero-title">
+                    🎭 مرحباً بك في لعبة المافيا
+                </h1>
+                <p class="hero-subtitle">
+                    لعبة تفاعلية مثيرة مع الذكاء الاصطناعي للكشف عن الغش والتحليل الذكي
+                </p>
+                <div class="hero-buttons mt-4">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-play"></i> ابدأ اللعب
+                        </a>
+                        <a href="{{ url_for('rooms') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-door-open"></i> تصفح الغرف
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-user-plus"></i> انضم الآن
+                        </a>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="mb-3">🌟 ميزات مذهلة</h2>
+                <p class="text-muted">اكتشف ما يجعل لعبة المافيا هذه مميزة ومثيرة</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- الذكاء الاصطناعي -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h5 class="card-title">ذكاء اصطناعي متقدم</h5>
+                        <p class="card-text">
+                            كشف الغش التلقائي وتحليل المحادثات لضمان لعب عادل ومثير
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الدردشة الصوتية -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                        <h5 class="card-title">دردشة صوتية ونصية</h5>
+                        <p class="card-text">
+                            تواصل مع اللاعبين بالصوت والنص مع تحويل الصوت إلى نص تلقائياً
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- أدوار متنوعة -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5 class="card-title">7 أدوار مختلفة</h5>
+                        <p class="card-text">
+                            مافيا، مواطن، طبيب، محقق، عدالة شعبية، عمدة، ومهرج
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- إحصائيات ذكية -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h5 class="card-title">إحصائيات تفصيلية</h5>
+                        <p class="card-text">
+                            تتبع أداءك واحصل على تقارير ذكية ونصائح للتحسين
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- لعب جماعي -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h5 class="card-title">لعب متعدد اللاعبين</h5>  
+                        <p class="card-text">
+                            العب مع أصدقائك أو لاعبين من حول العالم في الوقت الفعلي
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- سهولة الاستخدام -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h5 class="card-title">سهل الاستخدام</h5>
+                        <p class="card-text">
+                            واجهة بسيطة وجميلة تعمل على جميع الأجهزة والمتصفحات
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Game Roles Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="mb-3">🎭 الأدوار في اللعبة</h2>
+                <p class="text-muted">تعرف على الأدوار المختلفة وقدراتها الفريدة</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- مواطن -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="role-icon mb-3">
+                            <i class="fas fa-user text-info" style="font-size: 2rem;"></i>
+                        </div>
+                        <h6 class="card-title">👥 مواطن</h6>
+                        <p class="card-text small">
+                            الدور الأساسي، يصوت لإعدام المشبوهين نهاراً
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- مافيا -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="role-icon mb-3">
+                            <i class="fas fa-mask text-danger" style="font-size: 2rem;"></i>
+                        </div>
+                        <h6 class="card-title">🖤 مافيا</h6>
+                        <p class="card-text small">
+                            يقتل المواطنين ليلاً ويخفي هويته نهاراً
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- طبيب -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="role-icon mb-3">
+                            <i class="fas fa-user-md text-success" style="font-size: 2rem;"></i>
+                        </div>
+                        <h6 class="card-title">👨‍⚕️ طبيب</h6>
+                        <p class="card-text small">
+                            يحمي لاعباً واحداً كل ليلة من القتل
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- محقق -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="role-icon mb-3">
+                            <i class="fas fa-search text-primary" style="font-size: 2rem;"></i>
+                        </div>
+                        <h6 class="card-title">🕵️ محقق</h6>
+                        <p class="card-text small">
+                            يتحقق من هوية لاعب واحد كل ليلة
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- عدالة شعبية -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="role-icon mb-3">
+                            <i class="fas fa-gavel text-warning" style="font-size: 2rem;"></i>
+                        </div>
+                        <h6 class="card-title">⚖️ عدالة شعبية</h6>
+                        <p class="card-text small">
+                            يمكنه قتل لاعب واحد كل ليلة
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- عمدة -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="role-icon mb-3">
+                            <i class="fas fa-crown text-warning" style="font-size: 2rem;"></i>
+                        </div>
+                        <h6 class="card-title">👑 عمدة</h6>
+                        <p class="card-text small">
+                            صوته يحسب بصوتين في التصويت
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- مهرج -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="role-icon mb-3">
+                            <i class="fas fa-laugh text-purple" style="font-size: 2rem;"></i>
+                        </div>
+                        <h6 class="card-title">🃏 مهرج</h6>
+                        <p class="card-text small">
+                            يفوز إذا تم إعدامه بالتصويت نهاراً
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- مكان فارغ للتوازن -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card text-center h-100" style="opacity: 0.3;">
+                    <div class="card-body">
+                        <div class="role-icon mb-3">
+                            <i class="fas fa-question text-muted" style="font-size: 2rem;"></i>
+                        </div>
+                        <h6 class="card-title">❓ المزيد قريباً</h6>
+                        <p class="card-text small">
+                            أدوار جديدة ومثيرة قادمة!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+{% if stats %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="mb-3">📊 إحصائيات المنصة</h2>
+                <p class="text-muted">أرقام مذهلة من مجتمع لاعبي المافيا</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.total_users or 0 }}</div>
+                    <div class="stat-label">لاعب مسجل</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.total_games or 0 }}</div>
+                    <div class="stat-label">لعبة منتهية</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.active_rooms or 0 }}</div>
+                    <div class="stat-label">غرفة نشطة</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.online_users or 0 }}</div>
+                    <div class="stat-label">لاعب متصل</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h3 class="mb-3">🎮 جاهز لبدء المغامرة؟</h3>
+                <p class="mb-0">
+                    انضم إلى آلاف اللاعبين واستمتع بتجربة لعب مثيرة ومليئة بالتشويق والذكاء
+                </p>
+            </div>
+            <div class="col-lg-4 text-end">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('rooms') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-play"></i> ابدأ اللعب الآن
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-user-plus"></i> انضم مجاناً
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// تحديث الإحصائيات بشكل دوري
+document.addEventListener('DOMContentLoaded', function() {
+    // تحديث كل 30 ثانية
+    setInterval(updateStats, 30000);
+    
+    function updateStats() {
+        fetch('/api/stats/global')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const stats = data.platform;
+                    updateStatNumber('total_users', stats.total_users);
+                    updateStatNumber('total_games', stats.total_games);
+                    updateStatNumber('active_rooms', stats.active_rooms);
+                    updateStatNumber('online_users', stats.online_users);
+                }
+            })
+            .catch(error => console.log('خطأ في تحديث الإحصائيات:', error));
+    }
+    
+    function updateStatNumber(statType, newValue) {
+        const elements = document.querySelectorAll('.stat-number');
+        // البحث عن العنصر المناسب وتحديثه
+        // هذا مبسط - يمكن تحسينه لاحقاً
+    }
+});
+</script>
+{% endblock %}

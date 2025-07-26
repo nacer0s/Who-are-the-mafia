@@ -1,0 +1,653 @@
+{% extends "base.html" %}
+
+{% block title %}الأصدقاء - لعبة المافيا{% endblock %}
+
+{% block body_class %}friends-page{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Header -->
+        <div class="col-12 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 mb-2">
+                        <i class="fas fa-users text-primary"></i>
+                        أصدقائي
+                    </h1>
+                    <p class="text-muted">إدارة قائمة أصدقائك ودعوتهم للعب معك</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFriendModal">
+                        <i class="fas fa-user-plus"></i> إضافة صديق
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="refreshFriends()">
+                        <i class="fas fa-sync-alt"></i> تحديث
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- إحصائيات الأصدقاء -->
+        <div class="col-12 mb-4">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-number text-primary">0</div>
+                        <div class="stat-label">إجمالي الأصدقاء</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-number text-success">0</div>
+                        <div class="stat-label">متصل الآن</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-number text-info">0</div>
+                        <div class="stat-label">يلعب الآن</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-number text-warning">0</div>
+                        <div class="stat-label">طلبات معلقة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- قائمة الأصدقاء -->
+        <div class="col-lg-8">
+            <!-- البحث والفلترة -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control" id="searchFriends" 
+                                       placeholder="البحث في الأصدقاء...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-select" id="filterStatus">
+                                <option value="all">جميع الأصدقاء</option>
+                                <option value="online">المتصلين فقط</option>
+                                <option value="playing">يلعبون الآن</option>
+                                <option value="offline">غير متصل</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قائمة الأصدقاء -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list"></i> قائمة الأصدقاء
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="friendsList">
+                        <!-- سيتم ملء القائمة ببيانات وهمية أو حقيقية -->
+                        <div class="text-center py-5">
+                            <i class="fas fa-user-friends text-muted" style="font-size: 4rem;"></i>
+                            <h4 class="mt-3 text-muted">لا توجد أصدقاء بعد</h4>
+                            <p class="text-muted">ابدأ بإضافة أصدقائك للعب معهم</p>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFriendModal">
+                                <i class="fas fa-user-plus"></i> إضافة صديق الآن
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الشريط الجانبي -->
+        <div class="col-lg-4">
+            <!-- طلبات الصداقة -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-clock"></i> طلبات الصداقة المعلقة
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="friendRequests">
+                        <div class="text-center">
+                            <i class="fas fa-inbox text-muted" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2 mb-0">لا توجد طلبات معلقة</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الأصدقاء المتصلين -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-circle text-success"></i> متصل الآن
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="onlineFriends">
+                        <div class="text-center">
+                            <i class="fas fa-wifi text-muted" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2 mb-0">لا يوجد أصدقاء متصلين</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نصائح -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb"></i> نصائح
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="tip-item mb-3">
+                        <div class="tip-icon">
+                            <i class="fas fa-share-alt text-info"></i>
+                        </div>
+                        <div class="tip-content">
+                            <strong>دعوة الأصدقاء</strong>
+                            <p class="small text-muted mb-0">شارك رمز الغرفة مع أصدقائك لدعوتهم للعب</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-item mb-3">
+                        <div class="tip-icon">
+                            <i class="fas fa-trophy text-warning"></i>
+                        </div>
+                        <div class="tip-content">
+                            <strong>المنافسة</strong>
+                            <p class="small text-muted mb-0">تحدى أصدقاءك وقارن إحصائياتكم</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-item">
+                        <div class="tip-icon">
+                            <i class="fas fa-comments text-success"></i>
+                        </div>
+                        <div class="tip-content">
+                            <strong>التواصل</strong>
+                            <p class="small text-muted mb-0">استخدم الدردشة للتنسيق مع فريقك</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة إضافة صديق -->
+<div class="modal fade" id="addFriendModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus"></i> إضافة صديق جديد
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addFriendForm">
+                    <div class="mb-3">
+                        <label for="friendUsername" class="form-label">اسم المستخدم</label>
+                        <input type="text" class="form-control" id="friendUsername" 
+                               placeholder="أدخل اسم المستخدم..." required>
+                        <div class="form-text">ابحث عن الأصدقاء باستخدام اسم المستخدم الخاص بهم</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="friendMessage" class="form-label">رسالة (اختياري)</label>
+                        <textarea class="form-control" id="friendMessage" rows="3" 
+                                  placeholder="أضف رسالة شخصية..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    إلغاء
+                </button>
+                <button type="button" class="btn btn-primary" onclick="sendFriendRequest()">
+                    <i class="fas fa-paper-plane"></i> إرسال طلب الصداقة
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.friends-page {
+    background: #f8f9fa;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.friend-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.friend-item:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.1);
+}
+
+.friend-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 1rem;
+}
+
+.friend-info {
+    flex-grow: 1;
+}
+
+.friend-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.friend-status {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-left: 0.5rem;
+}
+
+.status-online {
+    background-color: #28a745;
+}
+
+.status-playing {
+    background-color: #007bff;
+}
+
+.status-offline {
+    background-color: #6c757d;
+}
+
+.friend-actions .btn {
+    margin-right: 0.25rem;
+}
+
+.tip-item {
+    display: flex;
+    align-items-flex-start;
+}
+
+.tip-icon {
+    margin-left: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.tip-content {
+    flex-grow: 1;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.btn {
+    border-radius: 8px;
+}
+
+.input-group .form-control,
+.input-group .input-group-text {
+    border-radius: 8px;
+}
+
+.input-group .form-control:not(:last-child) {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.input-group .input-group-text:not(:last-child) {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.modal-content {
+    border-radius: 15px;
+    border: none;
+}
+
+.modal-header {
+    border-radius: 15px 15px 0 0;
+}
+
+/* تحسين الاستجابة */
+@media (max-width: 768px) {
+    .display-5 {
+        font-size: 1.8rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+    }
+    
+    .friend-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .friend-avatar {
+        margin: 0 0 1rem 0;
+    }
+    
+    .friend-actions {
+        margin-top: 1rem;
+    }
+}
+
+/* Animation للعناصر الجديدة */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.friend-item {
+    animation: fadeInUp 0.3s ease;
+}
+
+/* Loading state */
+.loading {
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadFriends();
+    loadFriendRequests();
+    loadOnlineFriends();
+    
+    // البحث والفلترة
+    document.getElementById('searchFriends').addEventListener('input', filterFriends);
+    document.getElementById('filterStatus').addEventListener('change', filterFriends);
+});
+
+// تحميل قائمة الأصدقاء
+function loadFriends() {
+    // محاكاة تحميل البيانات
+    const friendsList = document.getElementById('friendsList');
+    friendsList.innerHTML = `
+        <div class="text-center loading" style="height: 100px;">
+            جاري التحميل...
+        </div>
+    `;
+    
+    // محاكاة API call
+    setTimeout(() => {
+        // بيانات وهمية للتجربة
+        const friends = [];
+        
+        if (friends.length === 0) {
+            friendsList.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-user-friends text-muted" style="font-size: 4rem;"></i>
+                    <h4 class="mt-3 text-muted">لا توجد أصدقاء بعد</h4>
+                    <p class="text-muted">ابدأ بإضافة أصدقائك للعب معهم</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFriendModal">
+                        <i class="fas fa-user-plus"></i> إضافة صديق الآن
+                    </button>
+                </div>
+            `;
+        } else {
+            // عرض قائمة الأصدقاء
+            friendsList.innerHTML = friends.map(friend => createFriendItem(friend)).join('');
+        }
+    }, 1000);
+}
+
+// إنشاء عنصر صديق
+function createFriendItem(friend) {
+    return `
+        <div class="friend-item" data-friend-id="${friend.id}">
+            <img src="${friend.avatar || '/static/images/default-avatar.png'}" 
+                 alt="${friend.name}" class="friend-avatar">
+            <div class="friend-info">
+                <div class="friend-name">${friend.name}</div>
+                <div class="friend-status">
+                    <span class="status-indicator status-${friend.status}"></span>
+                    ${getStatusText(friend.status)}
+                    ${friend.currentGame ? ` - يلعب في ${friend.currentGame}` : ''}
+                </div>
+            </div>
+            <div class="friend-actions">
+                <button class="btn btn-sm btn-primary" onclick="inviteToGame(${friend.id})">
+                    <i class="fas fa-gamepad"></i> دعوة للعب
+                </button>
+                <button class="btn btn-sm btn-outline-info" onclick="viewProfile(${friend.id})">
+                    <i class="fas fa-user"></i> الملف الشخصي
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="removeFriend(${friend.id})">
+                    <i class="fas fa-user-times"></i> حذف
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// الحصول على نص الحالة
+function getStatusText(status) {
+    const statusTexts = {
+        'online': 'متصل',
+        'playing': 'يلعب الآن',
+        'offline': 'غير متصل'
+    };
+    return statusTexts[status] || 'غير معروف';
+}
+
+// تحميل طلبات الصداقة
+function loadFriendRequests() {
+    // محاكاة تحميل طلبات الصداقة
+    const requestsContainer = document.getElementById('friendRequests');
+    // في التطبيق الحقيقي، ستأتي البيانات من API
+}
+
+// تحميل الأصدقاء المتصلين
+function loadOnlineFriends() {
+    const onlineContainer = document.getElementById('onlineFriends');
+    // في التطبيق الحقيقي، ستأتي البيانات من API
+}
+
+// فلترة الأصدقاء
+function filterFriends() {
+    const searchTerm = document.getElementById('searchFriends').value.toLowerCase();
+    const statusFilter = document.getElementById('filterStatus').value;
+    
+    const friendItems = document.querySelectorAll('.friend-item');
+    friendItems.forEach(item => {
+        const friendName = item.querySelector('.friend-name').textContent.toLowerCase();
+        const friendStatus = item.querySelector('.status-indicator').classList.contains(`status-${statusFilter}`) || statusFilter === 'all';
+        
+        const matchesSearch = friendName.includes(searchTerm);
+        const matchesStatus = statusFilter === 'all' || friendStatus;
+        
+        item.style.display = (matchesSearch && matchesStatus) ? 'flex' : 'none';
+    });
+}
+
+// إرسال طلب صداقة
+function sendFriendRequest() {
+    const username = document.getElementById('friendUsername').value.trim();
+    const message = document.getElementById('friendMessage').value.trim();
+    
+    if (!username) {
+        showNotification('يرجى إدخال اسم المستخدم', 'error');
+        return;
+    }
+    
+    // محاكاة إرسال طلب صداقة
+    fetch('/api/friends/request', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username: username,
+            message: message
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('تم إرسال طلب الصداقة بنجاح', 'success');
+            document.getElementById('addFriendForm').reset();
+            document.querySelector('[data-bs-dismiss="modal"]').click();
+        } else {
+            showNotification(data.message || 'حدث خطأ أثناء إرسال الطلب', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('حدث خطأ في الاتصال', 'error');
+    });
+}
+
+// دعوة للعب
+function inviteToGame(friendId) {
+    showNotification('ميزة الدعوة قيد التطوير', 'info');
+}
+
+// عرض الملف الشخصي
+function viewProfile(friendId) {
+    window.open(`/profile/${friendId}`, '_blank');
+}
+
+// حذف صديق
+function removeFriend(friendId) {
+    if (confirm('هل أنت متأكد من حذف هذا الصديق؟')) {
+        fetch(`/api/friends/${friendId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('تم حذف الصديق', 'success');
+                loadFriends(); // إعادة تحميل القائمة
+            } else {
+                showNotification(data.message || 'حدث خطأ أثناء الحذف', 'error');
+            }
+        })
+        .catch(error => {
+            showNotification('حدث خطأ في الاتصال', 'error');
+        });
+    }
+}
+
+// تحديث قائمة الأصدقاء
+function refreshFriends() {
+    loadFriends();
+    loadFriendRequests();
+    loadOnlineFriends();
+    showNotification('تم تحديث قائمة الأصدقاء', 'success');
+}
+
+// عرض الإشعارات
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 100px; right: 20px; z-index: 1050; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

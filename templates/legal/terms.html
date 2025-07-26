@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+
+{% block title %}شروط الاستخدام - لعبة المافيا{% endblock %}
+
+{% block body_class %}legal-page terms-page{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-file-contract text-primary"></i>
+                    شروط الاستخدام
+                </h1>
+                <p class="lead text-muted">
+                    يرجى قراءة هذه الشروط بعناية قبل استخدام موقع لعبة المافيا
+                </p>
+                <div class="alert alert-info">
+                    <small>
+                        <i class="fas fa-calendar-alt"></i>
+                        آخر تحديث: ديسمبر 2024
+                    </small>
+                </div>
+            </div>
+
+            <!-- المحتوى -->
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <h2 class="mb-4">1. قبول الشروط</h2>
+                    <p>
+                        بوصولك إلى موقع لعبة المافيا واستخدامه، فإنك توافق على الالتزام بهذه الشروط والأحكام. 
+                        إذا كنت لا توافق على أي من هذه الشروط، فلا يجوز لك استخدام هذا الموقع.
+                    </p>
+
+                    <h2 class="mb-4 mt-5">2. تعريف الخدمة</h2>
+                    <p>
+                        لعبة المافيا هي منصة ألعاب إلكترونية تتيح للمستخدمين لعب المافيا الجماعية عبر الإنترنت 
+                        مع ميزات الدردشة النصية والصوتية والذكاء الاصطناعي.
+                    </p>
+
+                    <h2 class="mb-4 mt-5">3. حسابات المستخدمين</h2>
+                    <div class="ps-3">
+                        <h5>3.1 التسجيل</h5>
+                        <ul>
+                            <li>يجب أن تكون أكبر من 13 عاماً لإنشاء حساب</li>
+                            <li>يجب تقديم معلومات صحيحة ومحدثة</li>
+                            <li>أنت مسؤول عن الحفاظ على سرية كلمة المرور</li>
+                            <li>لا يُسمح بإنشاء حسابات متعددة للمستخدم الواحد</li>
+                        </ul>
+
+                        <h5>3.2 مسؤولية المستخدم</h5>
+                        <ul>
+                            <li>أنت مسؤول عن جميع الأنشطة التي تحدث تحت حسابك</li>
+                            <li>يجب إخطارنا فوراً بأي استخدام غير مصرح به لحسابك</li>
+                            <li>لا نتحمل المسؤولية عن أي خسائر نتيجة عدم الامتثال لهذا القسم</li>
+                        </ul>
+                    </div>
+
+                    <h2 class="mb-4 mt-5">4. قواعد السلوك</h2>
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle"></i> يُمنع منعاً باتاً:</h6>
+                        <ul class="mb-0">
+                            <li>استخدام لغة نابية أو مسيئة</li>
+                            <li>التحرش أو التنمر ضد اللاعبين الآخرين</li>
+                            <li>الغش أو استخدام برامج خارجية</li>
+                            <li>مشاركة معلومات شخصية للآخرين</li>
+                            <li>انتحال هوية أشخاص آخرين</li>
+                            <li>إرسال رسائل غير مرغوب فيها (spam)</li>
+                            <li>تعطيل أو إعاقة الخدمة</li>
+                        </ul>
+                    </div>
+
+                    <h2 class="mb-4 mt-5">5. الملكية الفكرية</h2>
+                    <p>
+                        جميع محتويات الموقع، بما في ذلك النصوص والصور والصوت والفيديو والرسوم والتصميمات 
+                        والبرمجيات، محمية بموجب قوانين حقوق الطبع والنشر والملكية الفكرية.
+                    </p>
+
+                    <h2 class="mb-4 mt-5">6. الخصوصية وحماية البيانات</h2>
+                    <p>
+                        نحن ملتزمون بحماية خصوصيتك. يُرجى مراجعة 
+                        <a href="{{ url_for('privacy') }}" class="text-decoration-none">سياسة الخصوصية</a> 
+                        لفهم كيفية جمع واستخدام بياناتك الشخصية.
+                    </p>
+
+                    <h2 class="mb-4 mt-5">7. الذكاء الاصطناعي</h2>
+                    <div class="ps-3">
+                        <h5>7.1 استخدام الذكاء الاصطناعي</h5>
+                        <ul>
+                            <li>نستخدم الذكاء الاصطناعي لتحليل الرسائل وكشف الغش</li>
+                            <li>قد نستخدم الذكاء الاصطناعي لتحسين تجربة اللعب</li>
+                            <li>البيانات المستخدمة للذكاء الاصطناعي قد تشمل رسائلك ونشاطك في اللعبة</li>
+                        </ul>
+
+                        <h5>7.2 دقة النتائج</h5>
+                        <ul>
+                            <li>نتائج الذكاء الاصطناعي قد لا تكون دقيقة بنسبة 100%</li>
+                            <li>القرارات الإدارية النهائية تُتخذ من قبل المشرفين البشريين</li>
+                        </ul>
+                    </div>
+
+                    <h2 class="mb-4 mt-5">8. إنهاء الخدمة</h2>
+                    <p>
+                        نحتفظ بالحق في إنهاء أو تعليق حسابك فوراً، دون إشعار مسبق أو مسؤولية، 
+                        لأي سبب، بما في ذلك انتهاكك لهذه الشروط.
+                    </p>
+
+                    <h2 class="mb-4 mt-5">9. إخلاء المسؤولية</h2>
+                    <div class="alert alert-danger">
+                        <p class="mb-0">
+                            <strong>تُقدم الخدمة "كما هي" دون أي ضمانات.</strong> 
+                            لا نضمن أن الخدمة ستكون خالية من الأخطاء أو متاحة دون انقطاع. 
+                            لا نتحمل المسؤولية عن أي أضرار مباشرة أو غير مباشرة قد تنتج عن استخدام الخدمة.
+                        </p>
+                    </div>
+
+                    <h2 class="mb-4 mt-5">10. القانون الحاكم</h2>
+                    <p>
+                        تخضع هذه الشروط لقوانين دولة الإمارات العربية المتحدة وتُفسر وفقاً لها. 
+                        أي نزاع ينشأ عن هذه الشروط سيخضع للاختصاص الحصري للمحاكم الإماراتية.
+                    </p>
+
+                    <h2 class="mb-4 mt-5">11. تعديل الشروط</h2>
+                    <p>
+                        نحتفظ بالحق في تعديل هذه الشروط في أي وقت. سيتم إشعارك بالتغييرات المهمة 
+                        عبر البريد الإلكتروني أو إشعار في الموقع. استمرارك في استخدام الخدمة 
+                        بعد التغييرات يُعتبر موافقة على الشروط الجديدة.
+                    </p>
+
+                    <h2 class="mb-4 mt-5">12. معلومات الاتصال</h2>
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <p class="mb-2">
+                                <strong>إذا كان لديك أي أسئلة حول هذه الشروط، يُرجى التواصل معنا:</strong>
+                            </p>
+                            <ul class="list-unstyled mb-0">
+                                <li><i class="fas fa-envelope text-primary"></i> البريد الإلكتروني: support@mafia-game.com</li>
+                                <li><i class="fas fa-phone text-success"></i> الهاتف: +971-XX-XXXXXXX</li>
+                                <li><i class="fas fa-map-marker-alt text-danger"></i> العنوان: دبي، الإمارات العربية المتحدة</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- توقيع قانوني -->
+                    <div class="text-center mt-5">
+                        <div class="border-top pt-4">
+                            <p class="text-muted small">
+                                © 2024 لعبة المافيا. جميع الحقوق محفوظة.
+                                <br>
+                                هذه الوثيقة سارية المفعول اعتباراً من ديسمبر 2024
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- أزرار الإجراءات -->
+            <div class="text-center mt-4">
+                <div class="btn-group">
+                    <a href="{{ url_for('privacy') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-shield-alt"></i> سياسة الخصوصية
+                    </a>
+                    <a href="{{ url_for('help') }}" class="btn btn-outline-info">
+                        <i class="fas fa-question-circle"></i> المساعدة
+                    </a>
+                    <button onclick="window.print()" class="btn btn-outline-secondary">
+                        <i class="fas fa-print"></i> طباعة
+                    </button>
+                    <button onclick="window.close()" class="btn btn-outline-dark">
+                        <i class="fas fa-times"></i> إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.legal-page {
+    background: #f8f9fa;
+    font-family: 'Arial', 'Tahoma', sans-serif;
+}
+
+.legal-page h1 {
+    color: #2c3e50;
+}
+
+.legal-page h2 {
+    color: #34495e;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+}
+
+.legal-page h5 {
+    color: #2980b9;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.legal-page p {
+    line-height: 1.8;
+    text-align: justify;
+    color: #555;
+}
+
+.legal-page ul {
+    line-height: 1.7;
+}
+
+.legal-page li {
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.alert {
+    border-radius: 10px;
+}
+
+.btn-group .btn {
+    margin: 0 2px;
+}
+
+/* تحسين الطباعة */
+@media print {
+    .btn-group,
+    .navbar,
+    .footer {
+        display: none !important;
+    }
+    
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+    
+    body {
+        background: white !important;
+    }
+}
+
+/* تحسين الاستجابة */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .card-body {
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        margin: 2px 0;
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // تمييز الأقسام المهمة
+    const alerts = document.querySelectorAll('.alert-warning, .alert-danger');
+    alerts.forEach(alert => {
+        alert.addEventListener('click', function() {
+            this.style.animation = 'pulse 0.5s';
+            setTimeout(() => {
+                this.style.animation = '';
+            }, 500);
+        });
+    });
+    
+    // إضافة تأثير لسهولة القراءة
+    const sections = document.querySelectorAll('h2');
+    sections.forEach(section => {
+        section.style.cursor = 'pointer';
+        section.addEventListener('click', function() {
+            this.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    
+    // تحديد النص للنسخ السهل
+    document.addEventListener('selectstart', function(e) {
+        if (e.target.tagName === 'P' || e.target.tagName === 'LI') {
+            e.target.style.backgroundColor = '#e8f4fd';
+            setTimeout(() => {
+                e.target.style.backgroundColor = '';
+            }, 2000);
+        }
+    });
+});
+
+// دالة لحفظ الصفحة كـ PDF (إذا كان المتصفح يدعم ذلك)
+function savePDF() {
+    if (window.print) {
+        window.print();
+    } else {
+        alert('متصفحك لا يدعم هذه الميزة');
+    }
+}
+</script>
+{% endblock %}

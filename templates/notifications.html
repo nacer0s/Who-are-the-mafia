@@ -1,0 +1,814 @@
+{% extends "base.html" %}
+
+{% block title %}الإشعارات - لعبة المافيا{% endblock %}
+
+{% block body_class %}notifications-page{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Header -->
+        <div class="col-12 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 mb-2">
+                        <i class="fas fa-bell text-primary"></i>
+                        الإشعارات
+                    </h1>
+                    <p class="text-muted">تتبع جميع التحديثات والأحداث المهمة</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary" onclick="markAllAsRead()">
+                        <i class="fas fa-check-double"></i> تحديد الكل كمقروء
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="clearAllNotifications()">
+                        <i class="fas fa-trash"></i> مسح الكل
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="refreshNotifications()">
+                        <i class="fas fa-sync-alt"></i> تحديث
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- إحصائيات الإشعارات -->
+        <div class="col-12 mb-4">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-number text-primary" id="totalNotifications">0</div>
+                        <div class="stat-label">إجمالي الإشعارات</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-number text-warning" id="unreadNotifications">0</div>
+                        <div class="stat-label">غير مقروءة</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-number text-success" id="todayNotifications">0</div>
+                        <div class="stat-label">اليوم</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-number text-info" id="importantNotifications">0</div>
+                        <div class="stat-label">مهمة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الفلاتر والبحث -->
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control" id="searchNotifications" 
+                                       placeholder="البحث في الإشعارات...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="filterType">
+                                <option value="all">جميع الأنواع</option>
+                                <option value="game">إشعارات اللعبة</option>
+                                <option value="friend">طلبات الصداقة</option>
+                                <option value="system">إشعارات النظام</option>
+                                <option value="achievement">الإنجازات</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="filterStatus">
+                                <option value="all">جميع الحالات</option>
+                                <option value="unread">غير مقروءة</option>
+                                <option value="read">مقروءة</option>
+                                <option value="important">مهمة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" id="filterTime">
+                                <option value="all">كل الأوقات</option>
+                                <option value="today">اليوم</option>
+                                <option value="week">هذا الأسبوع</option>
+                                <option value="month">هذا الشهر</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- قائمة الإشعارات -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list"></i> الإشعارات
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="notificationsList">
+                        <!-- سيتم ملء القائمة بالإشعارات -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الشريط الجانبي -->
+        <div class="col-lg-4">
+            <!-- إعدادات الإشعارات -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-cog"></i> إعدادات الإشعارات
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="gameNotifications" checked>
+                        <label class="form-check-label" for="gameNotifications">
+                            إشعارات اللعبة
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="friendNotifications" checked>
+                        <label class="form-check-label" for="friendNotifications">
+                            طلبات الصداقة
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="systemNotifications" checked>
+                        <label class="form-check-label" for="systemNotifications">
+                            إشعارات النظام
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="achievementNotifications" checked>
+                        <label class="form-check-label" for="achievementNotifications">
+                            الإنجازات
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="emailNotifications">
+                        <label class="form-check-label" for="emailNotifications">
+                            إشعارات البريد الإلكتروني
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="soundNotifications" checked>
+                        <label class="form-check-label" for="soundNotifications">
+                            الأصوات
+                        </label>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-sm" onclick="saveNotificationSettings()">
+                        <i class="fas fa-save"></i> حفظ الإعدادات
+                    </button>
+                </div>
+            </div>
+
+            <!-- الإشعارات المهمة -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-exclamation-triangle text-warning"></i> إشعارات مهمة
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="importantNotificationsList">
+                        <div class="text-center">
+                            <i class="fas fa-info-circle text-muted" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2 mb-0">لا توجد إشعارات مهمة</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الإحصائيات الأسبوعية -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-line"></i> إحصائيات الأسبوع
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>إشعارات اللعبة</span>
+                        <span class="badge bg-primary">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>طلبات الصداقة</span>
+                        <span class="badge bg-success">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>إشعارات النظام</span>
+                        <span class="badge bg-info">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>الإنجازات</span>
+                        <span class="badge bg-warning">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.notifications-page {
+    background: #f8f9fa;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.notification-item {
+    display: flex;
+    align-items-flex-start;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notification-item.unread {
+    background-color: #e7f3ff;
+    border-left: 4px solid #007bff;
+}
+
+.notification-item.important {
+    border-left: 4px solid #ffc107;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+    font-size: 1.2rem;
+    color: white;
+}
+
+.notification-icon.game {
+    background-color: #007bff;
+}
+
+.notification-icon.friend {
+    background-color: #28a745;
+}
+
+.notification-icon.system {
+    background-color: #6c757d;
+}
+
+.notification-icon.achievement {
+    background-color: #ffc107;
+}
+
+.notification-content {
+    flex-grow: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #495057;
+}
+
+.notification-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.notification-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #adb5bd;
+}
+
+.notification-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.notification-actions .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.btn {
+    border-radius: 8px;
+}
+
+.form-select, .form-control {
+    border-radius: 8px;
+}
+
+.input-group .form-control,
+.input-group .input-group-text {
+    border-radius: 8px;
+}
+
+.input-group .form-control:not(:last-child) {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.input-group .input-group-text:not(:last-child) {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* تحسين الاستجابة */
+@media (max-width: 768px) {
+    .display-5 {
+        font-size: 1.8rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+    }
+    
+    .notification-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .notification-icon {
+        margin: 0 auto 1rem auto;
+    }
+    
+    .notification-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .notification-actions {
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+}
+
+/* Animation للعناصر الجديدة */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.notification-item {
+    animation: fadeInUp 0.3s ease;
+}
+
+/* Loading state */
+.loading {
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Badge للحالات */
+.badge.status-unread {
+    background-color: #007bff;
+}
+
+.badge.status-important {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge.status-read {
+    background-color: #6c757d;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.empty-state h4 {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #adb5bd;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadNotifications();
+    setupFilters();
+    updateStats();
+    
+    // تحديث الإشعارات كل دقيقة
+    setInterval(loadNotifications, 60000);
+});
+
+// تحميل الإشعارات
+function loadNotifications() {
+    const notificationsList = document.getElementById('notificationsList');
+    notificationsList.innerHTML = `
+        <div class="text-center loading py-5">
+            جاري تحميل الإشعارات...
+        </div>
+    `;
+    
+    // محاكاة API call
+    setTimeout(() => {
+        // بيانات وهمية للتجربة
+        const notifications = [
+            {
+                id: 1,
+                type: 'game',
+                title: 'دعوة للعب',
+                text: 'أحمد يدعوك للانضمام إلى غرفة "المافيا الليلية"',
+                time: '5 دقائق',
+                unread: true,
+                important: false
+            },
+            {
+                id: 2,
+                type: 'achievement',
+                title: 'إنجاز جديد!',
+                text: 'لقد حصلت على إنجاز "اللاعب المخضرم" - 50 لعبة مكتملة',
+                time: '30 دقيقة',
+                unread: true,
+                important: true
+            },
+            {
+                id: 3,
+                type: 'friend',
+                title: 'طلب صداقة جديد',
+                text: 'سارة ترغب في إضافتك كصديق',
+                time: 'ساعة واحدة',
+                unread: false,
+                important: false
+            },
+            {
+                id: 4,
+                type: 'system',
+                title: 'تحديث النظام',
+                text: 'تم إضافة ميزات جديدة للذكاء الاصطناعي في كشف الغش',
+                time: 'يومين',
+                unread: false,
+                important: false
+            }
+        ];
+        
+        if (notifications.length === 0) {
+            notificationsList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-bell-slash"></i>
+                    <h4>لا توجد إشعارات</h4>
+                    <p>ستظهر جميع إشعاراتك هنا</p>
+                </div>
+            `;
+        } else {
+            notificationsList.innerHTML = notifications.map(notification => 
+                createNotificationItem(notification)
+            ).join('');
+        }
+        
+        updateStats();
+    }, 1000);
+}
+
+// إنشاء عنصر إشعار
+function createNotificationItem(notification) {
+    const unreadClass = notification.unread ? 'unread' : '';
+    const importantClass = notification.important ? 'important' : '';
+    
+    return `
+        <div class="notification-item ${unreadClass} ${importantClass}" 
+             data-id="${notification.id}" onclick="markAsRead(${notification.id})">
+            <div class="notification-icon ${notification.type}">
+                <i class="fas fa-${getNotificationIcon(notification.type)}"></i>
+            </div>
+            <div class="notification-content">
+                <div class="notification-title">${notification.title}</div>
+                <div class="notification-text">${notification.text}</div>
+                <div class="notification-meta">
+                    <span>${notification.time}</span>
+                    <div class="notification-actions">
+                        ${notification.unread ? 
+                            `<button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); markAsRead(${notification.id})">
+                                <i class="fas fa-eye"></i> تحديد كمقروء
+                            </button>` : ''
+                        }
+                        <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deleteNotification(${notification.id})">
+                            <i class="fas fa-trash"></i> حذف
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// الحصول على أيقونة الإشعار
+function getNotificationIcon(type) {
+    const icons = {
+        'game': 'gamepad',
+        'friend': 'user-plus',
+        'system': 'cog',
+        'achievement': 'trophy'
+    };
+    return icons[type] || 'bell';
+}
+
+// إعداد الفلاتر
+function setupFilters() {
+    const filters = ['searchNotifications', 'filterType', 'filterStatus', 'filterTime'];
+    filters.forEach(filterId => {
+        document.getElementById(filterId).addEventListener('change', filterNotifications);
+        document.getElementById(filterId).addEventListener('input', filterNotifications);
+    });
+}
+
+// فلترة الإشعارات
+function filterNotifications() {
+    const searchTerm = document.getElementById('searchNotifications').value.toLowerCase();
+    const typeFilter = document.getElementById('filterType').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+    const timeFilter = document.getElementById('filterTime').value;
+    
+    const notificationItems = document.querySelectorAll('.notification-item');
+    
+    notificationItems.forEach(item => {
+        const title = item.querySelector('.notification-title').textContent.toLowerCase();
+        const text = item.querySelector('.notification-text').textContent.toLowerCase();
+        const type = item.querySelector('.notification-icon').classList[1];
+        const isUnread = item.classList.contains('unread');
+        const isImportant = item.classList.contains('important');
+        
+        const matchesSearch = title.includes(searchTerm) || text.includes(searchTerm);
+        const matchesType = typeFilter === 'all' || type === typeFilter;
+        const matchesStatus = statusFilter === 'all' || 
+                            (statusFilter === 'unread' && isUnread) ||
+                            (statusFilter === 'read' && !isUnread) ||
+                            (statusFilter === 'important' && isImportant);
+        
+        // يمكن إضافة فلترة الوقت هنا
+        const matchesTime = true; // مبسط للآن
+        
+        item.style.display = (matchesSearch && matchesType && matchesStatus && matchesTime) ? 'flex' : 'none';
+    });
+}
+
+// تحديث الإحصائيات
+function updateStats() {
+    const notificationItems = document.querySelectorAll('.notification-item');
+    const unreadItems = document.querySelectorAll('.notification-item.unread');
+    const importantItems = document.querySelectorAll('.notification-item.important');
+    
+    document.getElementById('totalNotifications').textContent = notificationItems.length;
+    document.getElementById('unreadNotifications').textContent = unreadItems.length;
+    document.getElementById('importantNotifications').textContent = importantItems.length;
+    
+    // يمكن إضافة إحصائيات أخرى
+    document.getElementById('todayNotifications').textContent = '0'; // مبسط للآن
+}
+
+// تحديد إشعار كمقروء
+function markAsRead(notificationId) {
+    const notification = document.querySelector(`[data-id="${notificationId}"]`);
+    if (notification) {
+        notification.classList.remove('unread');
+        
+        // إخفاء زر "تحديد كمقروء"
+        const markAsReadBtn = notification.querySelector('.btn-outline-primary');
+        if (markAsReadBtn) {
+            markAsReadBtn.remove();
+        }
+        
+        updateStats();
+        
+        // إرسال إلى الخادم
+        fetch(`/api/notifications/${notificationId}/read`, {
+            method: 'POST'
+        }).catch(error => {
+            console.error('خطأ في تحديث حالة الإشعار:', error);
+        });
+    }
+}
+
+// حذف إشعار
+function deleteNotification(notificationId) {
+    if (confirm('هل أنت متأكد من حذف هذا الإشعار؟')) {
+        const notification = document.querySelector(`[data-id="${notificationId}"]`);
+        if (notification) {
+            notification.remove();
+            updateStats();
+            showNotification('تم حذف الإشعار', 'success');
+            
+            // إرسال إلى الخادم
+            fetch(`/api/notifications/${notificationId}`, {
+                method: 'DELETE'
+            }).catch(error => {
+                console.error('خطأ في حذف الإشعار:', error);
+            });
+        }
+    }
+}
+
+// تحديد جميع الإشعارات كمقروءة
+function markAllAsRead() {
+    const unreadNotifications = document.querySelectorAll('.notification-item.unread');
+    unreadNotifications.forEach(notification => {
+        notification.classList.remove('unread');
+        const markAsReadBtn = notification.querySelector('.btn-outline-primary');
+        if (markAsReadBtn) {
+            markAsReadBtn.remove();
+        }
+    });
+    
+    updateStats();
+    showNotification('تم تحديد جميع الإشعارات كمقروءة', 'success');
+    
+    // إرسال إلى الخادم
+    fetch('/api/notifications/mark-all-read', {
+        method: 'POST'
+    }).catch(error => {
+        console.error('خطأ في تحديث الإشعارات:', error);
+    });
+}
+
+// مسح جميع الإشعارات
+function clearAllNotifications() {
+    if (confirm('هل أنت متأكد من حذف جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.')) {
+        document.getElementById('notificationsList').innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-bell-slash"></i>
+                <h4>لا توجد إشعارات</h4>
+                <p>ستظهر جميع إشعاراتك هنا</p>
+            </div>
+        `;
+        
+        updateStats();
+        showNotification('تم حذف جميع الإشعارات', 'success');
+        
+        // إرسال إلى الخادم
+        fetch('/api/notifications/clear-all', {
+            method: 'DELETE'
+        }).catch(error => {
+            console.error('خطأ في حذف الإشعارات:', error);
+        });
+    }
+}
+
+// تحديث الإشعارات
+function refreshNotifications() {
+    loadNotifications();
+    showNotification('تم تحديث الإشعارات', 'success');
+}
+
+// حفظ إعدادات الإشعارات
+function saveNotificationSettings() {
+    const settings = {
+        game: document.getElementById('gameNotifications').checked,
+        friend: document.getElementById('friendNotifications').checked,
+        system: document.getElementById('systemNotifications').checked,
+        achievement: document.getElementById('achievementNotifications').checked,
+        email: document.getElementById('emailNotifications').checked,
+        sound: document.getElementById('soundNotifications').checked
+    };
+    
+    // إرسال إلى الخادم
+    fetch('/api/notifications/settings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settings)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('تم حفظ الإعدادات بنجاح', 'success');
+        } else {
+            showNotification('حدث خطأ في حفظ الإعدادات', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('حدث خطأ في الاتصال', 'error');
+    });
+}
+
+// عرض الإشعارات
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 100px; right: 20px; z-index: 1050; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

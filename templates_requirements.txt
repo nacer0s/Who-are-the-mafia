@@ -1,0 +1,30 @@
+# Dependencies for Templates and Frontend
+# هذا ملف يوضح المتطلبات الإضافية للواجهات
+
+# Chart.js (يتم تحميله من CDN في الواجهات)
+# Bootstrap RTL (يتم تحميله من CDN)
+# Font Awesome (يتم تحميله من CDN)
+# Socket.IO Client (يتم تحميله من CDN)
+
+# لتشغيل الواجهات لا نحتاج لتثبيت إضافي
+# جميع مكتبات JavaScript يتم تحميلها من CDN
+
+# المكتبات المطلوبة في الخادم (Python):
+# Flask (موجودة في requirements.txt الأساسي)
+# Flask-SocketIO (موجودة في requirements.txt الأساسي)
+# Flask-Login (موجودة في requirements.txt الأساسي)
+
+# Static Files Structure:
+# /static/css/style.css ✓
+# /static/js/app.js ✓
+# /templates/base.html ✓
+# /templates/index.html ✓
+# /templates/auth/login.html ✓
+# /templates/auth/register.html ✓
+# /templates/dashboard.html ✓
+# /templates/rooms.html ✓
+# /templates/game.html ✓
+# /templates/stats.html ✓
+# /templates/errors/404.html ✓
+# /templates/errors/500.html ✓
+# /templates/errors/403.html ✓

@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}الصفحة غير موجودة - لعبة المافيا{% endblock %}
+
+{% block body_class %}error-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="text-center mt-5">
+                <!-- رقم الخطأ -->
+                <div class="error-code mb-4">
+                    <h1 class="display-1 text-primary">404</h1>
+                </div>
+                
+                <!-- الرسالة -->
+                <div class="error-message mb-4">
+                    <h2 class="h3 mb-3">
+                        <i class="fas fa-search text-muted"></i>
+                        الصفحة غير موجودة
+                    </h2>
+                    <p class="text-muted lead">
+                        عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها إلى مكان آخر.
+                    </p>
+                </div>
+                
+                <!-- الإجراءات -->
+                <div class="error-actions">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-home"></i> الصفحة الرئيسية
+                    </a>
+                    
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                        </a>
+                    {% endif %}
+                </div>
+                
+                <!-- روابط سريعة -->
+                <div class="quick-links mt-5">
+                    <h6 class="text-muted mb-3">أو جرب هذه الروابط:</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ url_for('rooms') if current_user.is_authenticated else url_for('register') }}" 
+                               class="text-decoration-none">
+                                <div class="card text-center h-100">
+                                    <div class="card-body">
+                                        <i class="fas fa-door-open text-primary mb-2" style="font-size: 2rem;"></i>
+                                        <h6>{{ 'الغرف' if current_user.is_authenticated else 'انضم الآن' }}</h6>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ url_for('help') }}" class="text-decoration-none">
+                                <div class="card text-center h-100">
+                                    <div class="card-body">
+                                        <i class="fas fa-question-circle text-success mb-2" style="font-size: 2rem;"></i>
+                                        <h6>المساعدة</h6>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ url_for('rules') }}" class="text-decoration-none">
+                                <div class="card text-center h-100">
+                                    <div class="card-body">
+                                        <i class="fas fa-book text-warning mb-2" style="font-size: 2rem;"></i>
+                                        <h6>قوانين اللعبة</h6>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.error-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.error-code h1 {
+    font-size: 8rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: bounce 2s infinite;
+}
+
+.error-message {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.quick-links .card {
+    transition: transform 0.3s ease;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.quick-links .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.error-actions .btn {
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,1319 @@
+{% extends "base.html" %}
+
+{% block title %}{{ room.name }} - لعبة المافيا{% endblock %}
+
+{% block body_class %}game-page{% endblock %}
+
+{% block content %}
+<!-- Game Container -->
+<div class="game-container">
+    <!-- Game Header -->
+    <div class="game-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-door-open"></i>
+                        {{ room.name }}
+                        <small class="text-light opacity-75">({{ room.room_code }})</small>
+                    </h5>
+                </div>
+                <div class="col-md-6">
+                    <div id="gamePhase" class="game-phase phase-waiting">
+                        <h6 class="mb-1">🏠 في الانتظار</h6>
+                        <small>انتظار اللاعبين...</small>
+                    </div>
+                </div>
+                <div class="col-md-3 text-end">
+                    <div class="game-controls">
+                        {% if room.host_id == current_user.id %}
+                            <button id="startGameBtn" class="btn btn-success btn-sm me-2" style="display: none;">
+                                <i class="fas fa-play"></i> بدء اللعبة
+                            </button>
+                        {% endif %}
+                        <button id="readyBtn" class="btn btn-outline-light btn-sm me-2">
+                            <i class="fas fa-check"></i> مستعد
+                        </button>
+                        <button class="btn btn-outline-light btn-sm" onclick="showGameMenu()">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Content -->
+    <div class="game-content">
+        <!-- Players Panel -->
+        <div class="players-panel">
+            <div class="panel-header">
+                <h6><i class="fas fa-users"></i> اللاعبون (<span id="playersCount">0</span>)</h6>
+            </div>
+            <div class="panel-body">
+                <div id="playersList">
+                    <!-- سيتم تحميل اللاعبين هنا -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div class="game-area">
+            <!-- Role Display -->
+            <div id="playerRole" class="player-role-display" style="display: none;">
+                <!-- سيتم عرض دور اللاعب هنا -->
+            </div>
+
+            <!-- Action Area -->
+            <div id="actionArea" class="action-area" style="display: none;">
+                <!-- أزرار الإجراءات حسب الدور والمرحلة -->
+            </div>
+
+            <!-- Chat Container -->
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- الرسائل ستظهر هنا -->
+                </div>
+                
+                <div class="chat-input-area">
+                    <form id="messageForm" class="d-flex">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="messageInput" 
+                                   placeholder="اكتب رسالتك هنا..." maxlength="500" autocomplete="off">
+                            
+                            {% if room.allow_voice_chat %}
+                            <button class="btn btn-outline-secondary" type="button" id="voiceBtn" 
+                                    title="تسجيل صوتي">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            {% endif %}
+                            
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- مؤشر الكتابة -->
+                    <div id="typingIndicator" class="typing-indicator" style="display: none;">
+                        <small class="text-muted">
+                            <span id="typingUsers"></span> يكتب...
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+
+<!-- Modal قائمة اللعبة -->
+<div class="modal fade" id="gameMenuModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-cog"></i> إعدادات اللعبة
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    <button class="list-group-item list-group-item-action" onclick="showRoomInfo()">
+                        <i class="fas fa-info-circle"></i> معلومات الغرفة
+                    </button>
+                    <button class="list-group-item list-group-item-action" onclick="showGameRules()">
+                        <i class="fas fa-book"></i> قوانين اللعبة
+                    </button>
+                    <button class="list-group-item list-group-item-action" onclick="showPlayerStats()">
+                        <i class="fas fa-chart-bar"></i> إحصائيات اللاعبين
+                    </button>
+                    <hr>
+                    <button class="list-group-item list-group-item-action" onclick="toggleSound()">
+                        <i class="fas fa-volume-up" id="soundIcon"></i> تبديل الصوت
+                    </button>
+                    <button class="list-group-item list-group-item-action" onclick="toggleNotifications()">
+                        <i class="fas fa-bell" id="notificationIcon"></i> تبديل الإشعارات
+                    </button>
+                    <hr>
+                    {% if room.host_id == current_user.id %}
+                    <button class="list-group-item list-group-item-action text-warning" onclick="showRoomSettings()">
+                        <i class="fas fa-tools"></i> إعدادات الغرفة
+                    </button>
+                    <button class="list-group-item list-group-item-action text-danger" onclick="confirmEndGame()">
+                        <i class="fas fa-stop"></i> إنهاء اللعبة
+                    </button>
+                    {% else %}
+                    <button class="list-group-item list-group-item-action text-danger" onclick="confirmLeaveRoom()">
+                        <i class="fas fa-door-open"></i> مغادرة الغرفة
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal معلومات الغرفة -->
+<div class="modal fade" id="roomInfoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-info-circle"></i> معلومات الغرفة
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>تفاصيل الغرفة:</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>الاسم:</strong> {{ room.name }}</li>
+                            <li><strong>الرمز:</strong> 
+                                <code>{{ room.room_code }}</code>
+                                <button class="btn btn-sm btn-outline-secondary ms-1" 
+                                        onclick="copyToClipboard('{{ room.room_code }}')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </li>
+                            <li><strong>المنظم:</strong> {{ room.host.display_name }}</li>
+                            <li><strong>اللاعبون:</strong> {{ room.current_players }}/{{ room.max_players }}</li>
+                            <li><strong>أُنشئت:</strong> {{ room.created_at.strftime('%Y-%m-%d %H:%M') }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>الإعدادات:</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                <i class="fas fa-{{ 'check text-success' if room.allow_voice_chat else 'times text-muted' }}"></i>
+                                الدردشة الصوتية
+                            </li>
+                            <li>
+                                <i class="fas fa-{{ 'check text-success' if room.allow_text_chat else 'times text-muted' }}"></i>
+                                الدردشة النصية
+                            </li>
+                            <li>
+                                <i class="fas fa-{{ 'check text-success' if room.ai_analysis_enabled else 'times text-muted' }}"></i>
+                                التحليل الذكي
+                            </li>
+                            <li>
+                                <i class="fas fa-{{ 'lock text-warning' if room.has_password else 'globe text-success' }}"></i>
+                                {{ 'محمية بكلمة مرور' if room.has_password else 'عامة' }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal الإجراءات -->
+<div class="modal fade" id="actionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="actionModalTitle">اختر إجراءك</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="actionModalBody">
+                <!-- محتوى الإجراءات -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary" id="confirmActionBtn">تأكيد</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Voice Recording Modal -->
+<div class="modal fade" id="voiceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-microphone"></i> تسجيل صوتي
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="recordingStatus" class="mb-3">
+                    <i class="fas fa-microphone text-muted" style="font-size: 3rem;"></i>
+                    <p class="mt-2">اضغط للبدء في التسجيل</p>
+                </div>
+                <div id="recordingTimer" class="mb-3" style="display: none;">
+                    <span class="badge bg-danger">
+                        <i class="fas fa-circle pulse"></i>
+                        <span id="timerText">00:00</span>
+                    </span>
+                </div>
+                <div id="audioPreview" class="mb-3" style="display: none;">
+                    <!-- معاينة الصوت -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-danger" id="recordBtn" onclick="toggleRecording()">
+                    <i class="fas fa-microphone"></i> بدء التسجيل
+                </button>
+                <button type="button" class="btn btn-success" id="sendVoiceBtn" style="display: none;" onclick="sendVoiceMessage()">
+                    <i class="fas fa-paper-plane"></i> إرسال
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.game-container {
+    height: calc(100vh - 76px);
+    display: flex;
+    flex-direction: column;
+    background: #f8f9fa;
+}
+
+.game-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.game-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.players-panel {
+    width: 300px;
+    background: white;
+    border-left: 1px solid #dee2e6;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.game-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+.player-role-display {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+.role-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1rem;
+    backdrop-filter: blur(10px);
+}
+
+.action-area {
+    background: #fff3cd;
+    border-bottom: 3px solid #ffc107;
+    padding: 1rem;
+    text-align: center;
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #f8f9fa;
+    max-height: none;
+}
+
+.chat-input-area {
+    padding: 1rem;
+    background: white;
+    border-top: 1px solid #dee2e6;
+}
+
+.message {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 15px;
+    position: relative;
+    animation: messageSlideIn 0.3s ease;
+    max-width: 80%;
+}
+
+.message.own {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    margin-right: auto;
+    margin-left: 2rem;
+    border-bottom-right-radius: 5px;
+}
+
+.message.other {
+    background: white;
+    color: #333;
+    margin-left: auto;
+    margin-right: 2rem;
+    border-bottom-left-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.message.system {
+    background: linear-gradient(45deg, #6c757d, #495057);
+    color: white;
+    text-align: center;
+    margin: 0 auto;
+    border-radius: 20px;
+    max-width: 60%;
+}
+
+.message.private {
+    background: linear-gradient(45deg, #e83e8c, #d91a72);
+    color: white;
+    border-left: 4px solid #ad1457;
+}
+
+.message.suspicious {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+    color: white;
+    border-left: 4px solid #c92a2a;
+}
+
+.message-header {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    opacity: 0.9;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    position: absolute;
+    bottom: 5px;  
+    left: 10px;
+}
+
+.message-content {
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.voice-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.voice-controls audio {
+    width: 200px;
+    height: 30px;
+}
+
+.player-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.player-item:hover {
+    background: #f8f9fa;
+}
+
+.player-item.current-user {
+    background: linear-gradient(45deg, #e3f2fd, #bbdefb);
+    border-left: 4px solid #2196f3;
+}
+
+.player-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    margin-left: 0.75rem;
+    position: relative;
+}
+
+.player-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.player-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-status {
+    font-size: 0.8rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.player-role-badge {
+    background: #6c757d;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+}
+
+.online-indicator {
+    width: 12px;
+    height: 12px;
+    background: #28a745;
+    border-radius: 50%;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    border: 2px solid white;
+}
+
+.ready-indicator {
+    color: #28a745;
+    font-size: 0.9rem;
+}
+
+.typing-indicator {
+    padding: 0.5rem 1rem;
+    animation: pulse 1.5s infinite;
+}
+
+.suspicion-bar {
+    height: 3px;
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.suspicion-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745, #ffc107, #dc3545);
+    transition: width 0.3s ease;
+}
+
+.game-phase {
+    text-align: center;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.phase-night {
+    background: linear-gradient(45deg, #2c3e50, #34495e);
+}
+
+.phase-day {
+    background: linear-gradient(45deg, #f39c12, #e67e22);
+}
+
+.phase-vote {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .game-content {
+        flex-direction: column;
+    }
+    
+    .players-panel {
+        width: 100%;
+        max-height: 200px;
+        border-left: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .message {
+        max-width: 95%;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+    
+    .game-header .col-md-6 {
+        order: -1;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* صوت */
+.pulse {
+    animation: pulse 1s infinite;
+}
+
+#recordingTimer .pulse {
+    animation: pulse 0.5s infinite;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// متغيرات اللعبة
+let currentRoom = null;
+let gameState = null;
+let isRecording = false;
+let mediaRecorder = null;
+let recordedBlob = null;
+let recordingTimer = null;
+let recordingSeconds = 0;
+
+// تهيئة اللعبة عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    initializeGame();
+    loadRoomData();
+    setupGameEvents();
+});
+
+// تهيئة اللعبة
+function initializeGame() {
+    currentRoom = {
+        code: '{{ room.room_code }}',
+        name: '{{ room.name }}',
+        host_id: {{ room.host_id }},
+        current_user_id: {{ current_user.id }}
+    };
+    
+    // الانضمام للغرفة عبر Socket
+    if (window.mafiaGame && window.mafiaGame.socket) {
+        window.mafiaGame.socket.emit('join_room', {
+            room_code: currentRoom.code
+        });
+    }
+    
+    // تحديث حالة الاستعداد
+    updateReadyButton();
+}
+
+// تحميل بيانات الغرفة
+async function loadRoomData() {
+    try {
+        const response = await fetch(`/api/room/${currentRoom.code}/info`);
+        const data = await response.json();
+        
+        if (data.success) {
+            updatePlayersDisplay(data.room.players);
+            updateGameStatus(data.room.game_state);
+        }
+    } catch (error) {
+        console.error('خطأ في تحميل بيانات الغرفة:', error);
+    }
+}
+
+// إعداد أحداث اللعبة
+function setupGameEvents() {
+    // أحداث Socket.IO إضافية خاصة باللعبة
+    if (window.mafiaGame && window.mafiaGame.socket) {
+        const socket = window.mafiaGame.socket;
+        
+        // تحديث قائمة اللاعبين
+        socket.on('players_updated', (data) => {
+            updatePlayersDisplay(data.players);
+        });
+        
+        // تحديث حالة الاستعداد
+        socket.on('player_ready_changed', (data) => {
+            updatePlayerReady(data.player_id, data.is_ready);
+        });
+        
+        // بدء اللعبة
+        socket.on('game_started', (data) => {
+            gameState = data.game_state;
+            updateGameDisplay();
+        });
+        
+        // تغيير مرحلة اللعبة
+        socket.on('phase_changed', (data) => {
+            updateGamePhase(data.phase);
+        });
+        
+        // تعيين الدور
+        socket.on('role_assigned', (data) => {
+            displayPlayerRole(data.role, data.role_info);
+        });
+        
+        // طلب إجراء
+        socket.on('action_required', (data) => {
+            showActionModal(data.action_type, data.options);
+        });
+        
+        // نتيجة التصويت
+        socket.on('vote_result', (data) => {
+            displayVoteResult(data);
+        });
+        
+        // انتهاء اللعبة
+        socket.on('game_ended', (data) => {
+            displayGameEnd(data);
+        });
+        
+        // مؤشر الكتابة
+        socket.on('user_typing', (data) => {
+            showTypingIndicator(data.user, data.is_typing);
+        });
+    }
+    
+    // أحداث إدخال الرسائل
+    const messageInput = document.getElementById('messageInput');
+    let typingTimeout;
+    
+    messageInput.addEventListener('input', () => {
+        // إرسال إشارة الكتابة
+        if (window.mafiaGame && window.mafiaGame.socket) {
+            window.mafiaGame.socket.emit('typing', { is_typing: true });
+        }
+        
+        // إيقاف إشارة الكتابة بعد 3 ثوان
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+            if (window.mafiaGame && window.mafiaGame.socket) {
+                window.mafiaGame.socket.emit('typing', { is_typing: false });
+            }
+        }, 3000);
+    });
+    
+    messageInput.addEventListener('blur', () => {
+        if (window.mafiaGame && window.mafiaGame.socket) {
+            window.mafiaGame.socket.emit('typing', { is_typing: false });
+        }
+    });
+}
+
+// تحديث عرض اللاعبين
+function updatePlayersDisplay(players) {
+    const playersList = document.getElementById('playersList');
+    const playersCount = document.getElementById('playersCount');
+    
+    playersCount.textContent = players.length;
+    playersList.innerHTML = '';
+    
+    players.forEach(player => {
+        const playerElement = createPlayerElement(player);
+        playersList.appendChild(playerElement);
+    });
+    
+    // تحديث زر بدء اللعبة للمنظم
+    updateStartButton(players);
+}
+
+// إنشاء عنصر اللاعب
+function createPlayerElement(player) {
+    const div = document.createElement('div');
+    div.className = `player-item ${player.id === currentRoom.current_user_id ? 'current-user' : ''}`;
+    div.dataset.playerId = player.id;
+    
+    // لون الأفاتار حسب الحالة
+    let avatarClass = '';
+    if (!player.is_alive && gameState) {
+        avatarClass = 'opacity-50';
+    }
+    
+    div.innerHTML = `
+        <div class="player-avatar ${avatarClass}">
+            ${player.display_name[0]}
+            ${player.is_online ? '<div class="online-indicator"></div>' : ''}
+        </div>
+        <div class="player-info">
+            <div class="player-name">${player.display_name}</div>
+            <div class="player-status">
+                ${player.is_ready ? '<i class="fas fa-check ready-indicator"></i>' : ''}
+                ${gameState && player.role ? `<span class="player-role-badge role-${player.role}">${getRoleName(player.role)}</span>` : ''}
+                ${gameState && !player.is_alive ? '<span class="text-danger">💀 ميت</span>' : ''}
+            </div>
+            ${player.suspicion_score > 0 ? `
+                <div class="suspicion-bar">
+                    <div class="suspicion-fill" style="width: ${player.suspicion_score * 100}%"></div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    // إضافة حدث النقر للإجراءات
+    div.addEventListener('click', () => {
+        if (gameState && player.id !== currentRoom.current_user_id) {
+            showPlayerActions(player);
+        }
+    });
+    
+    return div;
+}
+
+// تحديث حالة استعداد لاعب
+function updatePlayerReady(playerId, isReady) {
+    const playerElement = document.querySelector(`[data-player-id="${playerId}"]`);
+    if (playerElement) {
+        const readyIcon = playerElement.querySelector('.ready-indicator');
+        if (isReady && !readyIcon) {
+            const statusDiv = playerElement.querySelector('.player-status');
+            statusDiv.insertAdjacentHTML('afterbegin', '<i class="fas fa-check ready-indicator"></i> ');
+        } else if (!isReady && readyIcon) {
+            readyIcon.remove();
+        }
+    }
+}
+
+// تحديث زر البدء للمنظم
+function updateStartButton(players) {
+    const startBtn = document.getElementById('startGameBtn');
+    if (!startBtn) return;
+    
+    const isHost = currentRoom.host_id === currentRoom.current_user_id;
+    const readyPlayers = players.filter(p => p.is_ready).length;
+    const minPlayers = {{ room.min_players }};
+    
+    if (isHost && !gameState) {
+        if (readyPlayers >= minPlayers && readyPlayers === players.length) {
+            startBtn.style.display = 'inline-block';
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> بدء اللعبة';
+        } else {
+            startBtn.style.display = 'inline-block';
+            startBtn.disabled = true;
+            startBtn.innerHTML = `<i class="fas fa-clock"></i> انتظار (${readyPlayers}/${minPlayers})`;
+        }
+    } else {
+        startBtn.style.display = 'none';
+    }
+}
+
+// تحديث زر الاستعداد
+function updateReadyButton() {
+    const readyBtn = document.getElementById('readyBtn');
+    if (!readyBtn) return;
+    
+    // سيتم تحديث الحالة عند استلام البيانات من الخادم
+    readyBtn.addEventListener('click', () => {
+        if (window.mafiaGame && window.mafiaGame.socket) {
+            window.mafiaGame.socket.emit('toggle_ready');
+        }
+    });
+}
+
+// تحديث مرحلة اللعبة
+function updateGamePhase(phase) {
+    const phaseElement = document.getElementById('gamePhase');
+    if (!phaseElement) return;
+    
+    phaseElement.className = `game-phase phase-${phase.phase}`;
+    
+    let phaseText = '';
+    let phaseIcon = '';
+    
+    switch (phase.phase) {
+        case 'night':
+            phaseIcon = '🌙';
+            phaseText = 'الليل - وقت عمل الأدوار الخاصة';
+            break;
+        case 'day':
+            phaseIcon = '☀️';
+            phaseText = 'النهار - وقت النقاش';
+            break;
+        case 'vote':
+            phaseIcon = '🗳️';
+            phaseText = 'التصويت - اختر من تريد إعدامه';
+            break;
+        default:
+            phaseIcon = '🏠';
+            phaseText = 'في الانتظار';
+    }
+    
+    phaseElement.innerHTML = `
+        <h6 class="mb-1">${phaseIcon} ${phaseText}</h6>
+        ${phase.time_left ? `<small>الوقت المتبقي: <span id="phaseTimer">${phase.time_left}</span> ثانية</small>` : '<small>انتظار اللاعبين...</small>'}
+    `;
+    
+    if (phase.time_left) {
+        startPhaseTimer(phase.time_left);
+    }
+}
+
+// مؤقت المرحلة
+function startPhaseTimer(timeLeft) {
+    const timerElement = document.getElementById('phaseTimer');
+    if (!timerElement) return;
+    
+    const timer = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+        } else if (timeLeft <= 10) {
+            timerElement.parentElement.classList.add('text-warning');
+        }
+    }, 1000);
+}
+
+// عرض دور اللاعب
+function displayPlayerRole(role, roleInfo) {
+    const roleDisplay = document.getElementById('playerRole');
+    if (!roleDisplay) return;
+    
+    const roleName = getRoleName(role);
+    const roleDescription = getRoleDescription(role);
+    
+    roleDisplay.innerHTML = `
+        <div class="role-card">
+            <h5><i class="fas fa-${getRoleIcon(role)}"></i> دورك: ${roleName}</h5>
+            <p class="mb-0">${roleDescription}</p>
+            ${roleInfo.teammates ? `<small>فريقك: ${roleInfo.teammates.map(t => t.display_name).join(', ')}</small>` : ''}
+        </div>
+    `;
+    
+    roleDisplay.style.display = 'block';
+}
+
+// إظهار modal الإجراءات
+function showActionModal(actionType, options) {
+    const modal = new bootstrap.Modal(document.getElementById('actionModal'));
+    const title = document.getElementById('actionModalTitle');
+    const body = document.getElementById('actionModalBody');
+    
+    let actionTitle = '';
+    let actionContent = '';
+    
+    switch (actionType) {
+        case 'mafia_kill':
+            actionTitle = '🔪 اختر الضحية';
+            actionContent = createPlayerSelectionList(options.targets, 'kill');
+            break;
+        case 'doctor_heal':
+            actionTitle = '💊 اختر من تريد حمايته';
+            actionContent = createPlayerSelectionList(options.targets, 'heal');
+            break;
+        case 'detective_investigate':
+            actionTitle = '🔍 اختر من تريد التحقق منه';
+            actionContent = createPlayerSelectionList(options.targets, 'investigate');
+            break;
+        case 'vote':
+            actionTitle = '🗳️ صوت للإعدام';
+            actionContent = createPlayerSelectionList(options.targets, 'vote', true);
+            break;
+    }
+    
+    title.textContent = actionTitle;
+    body.innerHTML = actionContent;
+    
+    modal.show();
+}
+
+// إنشاء قائمة اختيار اللاعبين
+function createPlayerSelectionList(players, actionType, allowSkip = false) {
+    let html = '<div class="player-selection-list">';
+    
+    players.forEach(player => {
+        html += `
+            <div class="form-check player-selection-item">
+                <input class="form-check-input" type="radio" name="selectedPlayer" 
+                       value="${player.id}" id="player_${player.id}">
+                <label class="form-check-label" for="player_${player.id}">
+                    <div class="d-flex align-items-center">
+                        <div class="player-mini-avatar me-2">${player.display_name[0]}</div>
+                        <div>
+                            <strong>${player.display_name}</strong>
+                            ${player.suspicion_score > 0 ? `<small class="text-warning">(مشبوه: ${Math.round(player.suspicion_score * 100)}%)</small>` : ''}
+                        </div>
+                    </div>
+                </label>
+            </div>
+        `;
+    });
+    
+    if (allowSkip) {
+        html += `
+            <div class="form-check player-selection-item">
+                <input class="form-check-input" type="radio" name="selectedPlayer" 
+                       value="skip" id="skip_action">
+                <label class="form-check-label" for="skip_action">
+                    <div class="text-muted">
+                        <i class="fas fa-ban"></i> امتناع عن التصويت
+                    </div>
+                </label>
+            </div>
+        `;
+    }
+    
+    html += '</div>';
+    
+    // إضافة مستمع للتأكيد
+    setTimeout(() => {
+        document.getElementById('confirmActionBtn').onclick = () => confirmAction(actionType);
+    }, 100);
+    
+    return html;
+}
+
+// تأكيد الإجراء
+function confirmAction(actionType) {
+    const selectedPlayer = document.querySelector('input[name="selectedPlayer"]:checked');
+    if (!selectedPlayer) {
+        window.mafiaGame.showNotification('يجب اختيار لاعب أولاً', 'warning');
+        return;
+    }
+    
+    const targetId = selectedPlayer.value === 'skip' ? null : parseInt(selectedPlayer.value);
+    
+    // إرسال الإجراء للخادم
+    if (window.mafiaGame && window.mafiaGame.socket) {
+        window.mafiaGame.socket.emit('player_action', {
+            action_type: actionType,
+            target_id: targetId
+        });
+    }
+    
+    // إخفاء الـ modal
+    bootstrap.Modal.getInstance(document.getElementById('actionModal')).hide();
+    
+    window.mafiaGame.showNotification('تم إرسال اختيارك', 'success');
+}
+
+// عرض نتيجة التصويت
+function displayVoteResult(result) {
+    let message = '';
+    
+    if (result.eliminated_player) {
+        message = `تم إعدام ${result.eliminated_player.display_name}`;
+        if (result.eliminated_player.role) {
+            message += ` (${getRoleName(result.eliminated_player.role)})`;
+        }
+    } else {
+        message = 'لم يتم إعدام أحد (تعادل)';
+    }
+    
+    // إضافة رسالة نظام
+    addSystemMessage(message);
+    
+    // تحديث قائمة اللاعبين
+    if (result.players) {
+        updatePlayersDisplay(result.players);
+    }
+}
+
+// عرض نهاية اللعبة
+function displayGameEnd(result) {
+    // سيتم استخدام modal نتيجة اللعبة من app.js
+    if (window.mafiaGame) {
+        window.mafiaGame.showGameResult(result);
+    }
+}
+
+// إضافة رسالة نظام
+function addSystemMessage(content) {
+    const messagesContainer = document.getElementById('chatMessages');
+    if (!messagesContainer) return;
+    
+    const messageElement = document.createElement('div');
+    messageElement.className = 'message system';
+    
+    const time = new Date().toLocaleTimeString('ar-SA', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    messageElement.innerHTML = `
+        <div class="message-content">${content}</div>
+        <div class="message-time">${time}</div>
+    `;
+    
+    messagesContainer.appendChild(messageElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// إظهار مؤشر الكتابة
+function showTypingIndicator(user, isTyping) {
+    const indicator = document.getElementById('typingIndicator');
+    const usersSpan = document.getElementById('typingUsers');
+    
+    if (isTyping) {
+        usersSpan.textContent = user.display_name;
+        indicator.style.display = 'block';
+        
+        // إخفاء بعد 5 ثوان
+        setTimeout(() => {
+            indicator.style.display = 'none';
+        }, 5000);
+    } else {
+        indicator.style.display = 'none';
+    }
+}
+
+// تسجيل صوتي
+function showVoiceModal() {
+    const modal = new bootstrap.Modal(document.getElementById('voiceModal'));
+    modal.show();
+}
+
+async function toggleRecording() {
+    if (!isRecording) {
+        await startRecording();
+    } else {
+        stopRecording();
+    }
+}
+
+async function startRecording() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        
+        const chunks = [];
+        mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+        
+        mediaRecorder.onstop = () => {
+            recordedBlob = new Blob(chunks, { type: 'audio/wav' });
+            showAudioPreview();
+        };
+        
+        mediaRecorder.start();
+        isRecording = true;
+        
+        updateRecordingUI();
+        startRecordingTimer();
+        
+    } catch (error) {
+        window.mafiaGame.showNotification('فشل في الوصول للميكروفون', 'danger');
+    }
+}
+
+function stopRecording() {
+    if (mediaRecorder && isRecording) {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        isRecording = false;
+        
+        clearInterval(recordingTimer);
+        updateRecordingUI();
+    }
+}
+
+function updateRecordingUI() {
+    const status = document.getElementById('recordingStatus');
+    const timer = document.getElementById('recordingTimer');
+    const recordBtn = document.getElementById('recordBtn');
+    
+    if (isRecording) {
+        status.innerHTML = '<i class="fas fa-microphone text-danger pulse" style="font-size: 3rem;"></i><p class="mt-2 text-danger">جاري التسجيل...</p>';
+        timer.style.display = 'block';
+        recordBtn.innerHTML = '<i class="fas fa-stop"></i> إيقاف';
+        recordBtn.className = 'btn btn-secondary';
+    } else {
+        timer.style.display = 'none';
+        recordBtn.innerHTML = '<i class="fas fa-microphone"></i> بدء التسجيل';
+        recordBtn.className = 'btn btn-danger';
+    }
+}
+
+function startRecordingTimer() {
+    recordingSeconds = 0;
+    recordingTimer = setInterval(() => {
+        recordingSeconds++;
+        const minutes = Math.floor(recordingSeconds / 60);
+        const seconds = recordingSeconds % 60;
+        document.getElementById('timerText').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+        // حد أقصى دقيقتين
+        if (recordingSeconds >= 120) {
+            stopRecording();
+        }
+    }, 1000);
+}
+
+function showAudioPreview() {
+    const preview = document.getElementById('audioPreview');
+    const sendBtn = document.getElementById('sendVoiceBtn');
+    
+    const audio = document.createElement('audio');
+    audio.controls = true;
+    audio.src = URL.createObjectURL(recordedBlob);
+    
+    preview.innerHTML = '';
+    preview.appendChild(audio);
+    preview.style.display = 'block';
+    sendBtn.style.display = 'inline-block';
+}
+
+async function sendVoiceMessage() {
+    if (!recordedBlob) return;
+    
+    const formData = new FormData();
+    formData.append('voice', recordedBlob, 'voice_message.wav');
+    formData.append('duration', recordingSeconds);
+    
+    window.mafiaGame.showLoading('جاري إرسال الرسالة الصوتية...');
+    
+    try {
+        const response = await fetch('/api/chat/voice', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.mafiaGame.showNotification('تم إرسال الرسالة الصوتية', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('voiceModal')).hide();
+            
+            // إعادة تعيين الحالة
+            recordedBlob = null;
+            recordingSeconds = 0;
+            document.getElementById('audioPreview').style.display = 'none';
+            document.getElementById('sendVoiceBtn').style.display = 'none';
+            
+        } else {
+            window.mafiaGame.showNotification(result.message, 'danger');
+        }
+    } catch (error) {
+        window.mafiaGame.showNotification('فشل في إرسال الرسالة الصوتية', 'danger');
+    } finally {
+        window.mafiaGame.hideLoading();
+    }
+}
+
+// دوال مساعدة
+function getRoleName(role) {
+    const names = {
+        'civilian': 'مواطن',
+        'mafia': 'مافيا',
+        'doctor': 'طبيب',
+        'detective': 'محقق',
+        'vigilante': 'عدالة شعبية',
+        'mayor': 'عمدة',
+        'jester': 'مهرج'
+    };
+    return names[role] || role;
+}
+
+function getRoleDescription(role) {
+    const descriptions = {
+        'civilian': 'أنت مواطن عادي. هدفك القضاء على المافيا بالتصويت نهاراً.',
+        'mafia': 'أنت من المافيا. اقتل المواطنين ليلاً واخفِ هويتك نهاراً.',
+        'doctor': 'أنت الطبيب. احمِ لاعباً واحداً كل ليلة من القتل.',
+        'detective': 'أنت المحقق. تحقق من هوية لاعب واحد كل ليلة.',
+        'vigilante': 'أنت العدالة الشعبية. يمكنك قتل لاعب واحد كل ليلة.',
+        'mayor': 'أنت العمدة. صوتك يحسب بصوتين في التصويت.',
+        'jester': 'أنت المهرج. تفوز إذا تم إعدامك بالتصويت نهاراً.'
+    };
+    return descriptions[role] || 'دور غير معروف';
+}
+
+function getRoleIcon(role) {
+    const icons = {
+        'civilian': 'user',
+        'mafia': 'mask',
+        'doctor': 'user-md',
+        'detective': 'search',
+        'vigilante': 'gavel',
+        'mayor': 'crown',
+        'jester': 'laugh'
+    };
+    return icons[role] || 'user';
+}
+
+// قائمة اللعبة والإعدادات
+function showGameMenu() {
+    const modal = new bootstrap.Modal(document.getElementById('gameMenuModal'));
+    modal.show();
+}
+
+function showRoomInfo() {
+    const modal = new bootstrap.Modal(document.getElementById('roomInfoModal'));
+    modal.show();
+}
+
+function showGameRules() {
+    window.open('/rules', '_blank');
+}
+
+async function showPlayerStats() {
+    // تنفيذ عرض إحصائيات اللاعبين
+    window.mafiaGame.showNotification('ميزة قيد التطوير', 'info');
+}
+
+function toggleSound() {
+    // تنفيذ تبديل الصوت
+    window.mafiaGame.showNotification('ميزة تبديل الصوت قيد التطوير', 'info');
+}
+
+function toggleNotifications() {
+    // تنفيذ تبديل الإشعارات
+    window.mafiaGame.showNotification('ميزة تبديل الإشعارات قيد التطوير', 'info');
+}
+
+function confirmLeaveRoom() {
+    if (confirm('هل أنت متأكد من مغادرة الغرفة؟')) {
+        window.location.href = '/rooms';
+    }
+}
+
+function confirmEndGame() {
+    if (confirm('هل أنت متأكد من إنهاء اللعبة؟ سيتم إنهاء اللعبة لجميع اللاعبين.')) {
+        // إرسال طلب إنهاء اللعبة
+        if (window.mafiaGame && window.mafiaGame.socket) {
+            window.mafiaGame.socket.emit('end_game');
+        }
+    }
+}
+
+// ربط أحداث إضافية
+document.getElementById('voiceBtn')?.addEventListener('click', showVoiceModal);
+</script>
+{% endblock %}

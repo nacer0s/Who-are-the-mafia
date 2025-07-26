@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}تسجيل الدخول - لعبة المافيا{% endblock %}
+
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h4>
+                        <i class="fas fa-sign-in-alt"></i>
+                        تسجيل الدخول
+                    </h4>
+                    <p class="text-muted mb-0">ادخل إلى حسابك للبدء في اللعب</p>
+                </div>
+                <div class="card-body p-4">
+                    <form id="loginForm">
+                        <!-- اسم المستخدم -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user"></i>
+                                اسم المستخدم
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="username" 
+                                   name="username" 
+                                   required
+                                   placeholder="أدخل اسم المستخدم"
+                                   autocomplete="username">
+                        </div>
+
+                        <!-- كلمة المرور -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                كلمة المرور
+                            </label>
+                            <div class="input-group">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="password" 
+                                       required
+                                       placeholder="أدخل كلمة المرور"
+                                       autocomplete="current-password">
+                                <button class="btn btn-outline-secondary" 
+                                        type="button" 
+                                        onclick="togglePassword('password')">
+                                    <i class="fas fa-eye" id="password-toggle-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- تذكرني -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember">
+                            <label class="form-check-label" for="remember">
+                                تذكرني
+                            </label>
+                        </div>
+
+                        <!-- زر تسجيل الدخول -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt"></i>
+                                تسجيل الدخول
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- تسجيل سريع بالحسابات التجريبية -->
+                    <hr class="my-4">
+                    <div class="text-center">
+                        <h6 class="text-muted">تسجيل دخول سريع:</h6>
+                        <div class="row g-2 mt-2">
+                            <div class="col-6">
+                                <button type="button" 
+                                        class="btn btn-outline-success btn-sm w-100" 
+                                        onclick="quickLogin('admin', 'admin123')">
+                                    👑 مدير
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" 
+                                        class="btn btn-outline-info btn-sm w-100" 
+                                        onclick="quickLogin('احمد', 'test123')">
+                                    👤 أحمد
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" 
+                                        class="btn btn-outline-info btn-sm w-100" 
+                                        onclick="quickLogin('فاطمة', 'test123')">
+                                    👤 فاطمة
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" 
+                                        class="btn btn-outline-info btn-sm w-100" 
+                                        onclick="quickLogin('محمد', 'test123')">
+                                    👤 محمد
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <div class="text-muted">
+                        ليس لديك حساب؟ 
+                        <a href="{{ url_for('register') }}" class="text-decoration-none">
+                            <strong>أنشئ حساباً جديداً</strong>
+                        </a>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{{ url_for('forgot_password') }}" class="text-muted small text-decoration-none">
+                            نسيت كلمة المرور؟
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- معلومات إضافية -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <i class="fas fa-users text-primary" style="font-size: 2rem;"></i>
+                            </div>
+                            <h6>لعب جماعي</h6>
+                            <p class="text-muted small">العب مع أصدقائك أو لاعبين آخرين</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <i class="fas fa-brain text-success" style="font-size: 2rem;"></i>
+                            </div>
+                            <h6>ذكاء اصطناعي</h6>
+                            <p class="text-muted small">كشف الغش وتحليل الأداء تلقائياً</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <i class="fas fa-chart-line text-warning" style="font-size: 2rem;"></i>
+                            </div>
+                            <h6>إحصائيات مفصلة</h6>
+                            <p class="text-muted small">تتبع تقدمك واحصل على تقارير</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// تبديل إظهار/إخفاء كلمة المرور
+function togglePassword(inputId) {
+    const passwordInput = document.getElementById(inputId);
+    const toggleIcon = document.getElementById(`${inputId}-toggle-icon`);
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+// تسجيل دخول سريع
+function quickLogin(username, password) {
+    document.getElementById('username').value = username;
+    document.getElementById('password').value = password;
+    
+    // إرسال النموذج تلقائياً
+    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+}
+
+// التركيز على حقل اسم المستخدم عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('username').focus();
+    
+    // معالجة Enter في كلمة المرور
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        }
+    });
+});
+
+// تحسين UX - إظهار تلميحات
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+
+usernameInput.addEventListener('focus', function() {
+    if (!this.value && document.querySelectorAll('.demo-hint').length === 0) {
+        const hint = document.createElement('small');
+        hint.className = 'text-muted demo-hint';
+        hint.innerHTML = '💡 جرب: admin أو احمد أو فاطمة أو محمد';
+        this.parentNode.appendChild(hint);
+    }
+});
+
+passwordInput.addEventListener('focus', function() {
+    if (!this.value && document.querySelectorAll('.password-hint').length === 0) {
+        const hint = document.createElement('small');
+        hint.className = 'text-muted password-hint';
+        hint.innerHTML = '🔑 كلمة المرور للحسابات التجريبية: admin123 أو test123';
+        this.parentNode.appendChild(hint);
+    }
+});
+</script>
+{% endblock %}

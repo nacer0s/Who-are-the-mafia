@@ -1,0 +1,1100 @@
+{% extends "base.html" %}
+
+{% block title %}المساعدة والدعم - لعبة المافيا{% endblock %}
+
+{% block body_class %}help-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="text-center">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-question-circle text-primary"></i>
+                    المساعدة والدعم
+                </h1>
+                <p class="lead text-muted">
+                    نحن هنا لمساعدتك! اطلع على الأسئلة الشائعة أو تواصل معنا مباشرة
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- الشريط الجانبي -->
+        <div class="col-lg-3 mb-4">
+            <div class="sticky-top" style="top: 100px;">
+                <!-- البحث السريع -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6><i class="fas fa-search"></i> البحث السريع</h6>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" class="form-control" id="helpSearch" 
+                               placeholder="ابحث في المساعدة...">
+                    </div>
+                </div>
+
+                <!-- فئات المساعدة -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-list"></i> الفئات</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <a href="#getting-started" class="list-group-item list-group-item-action">
+                                <i class="fas fa-play text-success"></i> البدء السريع
+                            </a>
+                            <a href="#account" class="list-group-item list-group-item-action">
+                                <i class="fas fa-user text-primary"></i> الحساب والملف الشخصي
+                            </a>
+                            <a href="#gameplay" class="list-group-item list-group-item-action">
+                                <i class="fas fa-gamepad text-warning"></i> اللعب والغرف
+                            </a>
+                            <a href="#technical" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cog text-secondary"></i> المشاكل التقنية
+                            </a>
+                            <a href="#features" class="list-group-item list-group-item-action">
+                                <i class="fas fa-star text-info"></i> الميزات المتقدمة
+                            </a>
+                            <a href="#community" class="list-group-item list-group-item-action">
+                                <i class="fas fa-users text-danger"></i> المجتمع والقوانين
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- روابط سريعة -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6><i class="fas fa-external-link-alt"></i> روابط مفيدة</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('rules') }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-book"></i> قوانين اللعبة
+                            </a>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                            </a>
+                            <a href="{{ url_for('profile') }}" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-user"></i> الملف الشخصي
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="col-lg-9">
+            <!-- البدء السريع -->
+            <section id="getting-started" class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-play text-success"></i> البدء السريع</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="quick-start-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h5>إنشاء حساب</h5>
+                                        <p>سجل حساباً جديداً أو سجل دخولك إذا كان لديك حساب مسبقاً.</p>
+                                        <a href="{{ url_for('register') }}" class="btn btn-sm btn-primary">إنشاء حساب</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="quick-start-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h5>انضم لغرفة</h5>
+                                        <p>اختر غرفة من الغرف المتاحة أو أنشئ غرفتك الخاصة.</p>
+                                        <a href="{{ url_for('rooms') }}" class="btn btn-sm btn-success">تصفح الغرف</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="quick-start-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <h5>تعلم القوانين</h5>
+                                        <p>اقرأ قوانين اللعبة لفهم كيفية اللعب والأدوار المختلفة.</p>
+                                        <a href="{{ url_for('rules') }}" class="btn btn-sm btn-warning">قوانين اللعبة</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="quick-start-step">
+                                    <div class="step-number">4</div>
+                                    <div class="step-content">
+                                        <h5>ابدأ اللعب</h5>
+                                        <p>استمتع باللعب مع الآخرين واكسب النقاط والإنجازات!</p>
+                                        <button class="btn btn-sm btn-info" onclick="startQuickGame()">لعبة سريعة</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- الأسئلة الشائعة -->
+            <div class="faq-container">
+                <!-- الحساب والملف الشخصي -->
+                <section id="account" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-user text-primary"></i> الحساب والملف الشخصي</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="accountAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account1">
+                                            كيف أنشئ حساباً جديداً؟
+                                        </button>
+                                    </h2>
+                                    <div id="account1" class="accordion-collapse collapse" data-bs-parent="#accountAccordion">
+                                        <div class="accordion-body">
+                                            <p>لإنشاء حساب جديد:</p>
+                                            <ol>
+                                                <li>اضغط على زر "إنشاء حساب" في الصفحة الرئيسية</li>
+                                                <li>أدخل اسم المستخدم والبريد الإلكتروني وكلمة المرور</li>
+                                                <li>اضغط على "تسجيل"</li>
+                                                <li>ستحصل على رسالة تأكيد في بريدك الإلكتروني (إن وجد)</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account2">
+                                            نسيت كلمة المرور، ماذا أفعل؟
+                                        </button>
+                                    </h2>
+                                    <div id="account2" class="accordion-collapse collapse" data-bs-parent="#accountAccordion">
+                                        <div class="accordion-body">
+                                            <p>لاستعادة كلمة المرور:</p>
+                                            <ol>
+                                                <li>اذهب إلى صفحة تسجيل الدخول</li>
+                                                <li>اضغط على "نسيت كلمة المرور؟"</li>
+                                                <li>أدخل بريدك الإلكتروني المسجل</li>
+                                                <li>ستحصل على رابط إعادة تعيين كلمة المرور</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account3">
+                                            كيف أغير اسم العرض أو معلوماتي الشخصية؟
+                                        </button>
+                                    </h2>
+                                    <div id="account3" class="accordion-collapse collapse" data-bs-parent="#accountAccordion">
+                                        <div class="accordion-body">
+                                            <p>لتعديل معلوماتك الشخصية:</p>
+                                            <ol>
+                                                <li>اذهب إلى <a href="{{ url_for('profile') }}">الملف الشخصي</a></li>
+                                                <li>اضغط على تبويب "المعلومات"</li>
+                                                <li>عدل المعلومات المطلوبة</li>
+                                                <li>اضغط "حفظ التغييرات"</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- اللعب والغرف -->
+                <section id="gameplay" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-gamepad text-warning"></i> اللعب والغرف</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="gameplayAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gameplay1">
+                                            كيف أنشئ غرفة جديدة؟
+                                        </button>
+                                    </h2>
+                                    <div id="gameplay1" class="accordion-collapse collapse" data-bs-parent="#gameplayAccordion">
+                                        <div class="accordion-body">
+                                            <p>لإنشاء غرفة جديدة:</p>
+                                            <ol>
+                                                <li>اذهب إلى صفحة <a href="{{ url_for('rooms') }}">الغرف</a></li>
+                                                <li>اضغط على "أنشئ غرفة"</li>
+                                                <li>اختر اسم الغرفة وإعداداتها</li>
+                                                <li>حدد عدد اللاعبين الأدنى والأقصى</li>
+                                                <li>اضغط "إنشاء الغرفة"</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gameplay2">
+                                            كيف أنضم لغرفة برمز؟
+                                        </button>
+                                    </h2>
+                                    <div id="gameplay2" class="accordion-collapse collapse" data-bs-parent="#gameplayAccordion">
+                                        <div class="accordion-body">
+                                            <p>للانضمام لغرفة برمز:</p>
+                                            <ol>
+                                                <li>احصل على رمز الغرفة من منظمها</li>
+                                                <li>اضغط "انضم برمز" في صفحة الغرف</li>
+                                                <li>أدخل الرمز المكون من 6 أحرف</li>
+                                                <li>أدخل كلمة المرور إذا كانت الغرفة محمية</li>
+                                                <li>اضغط "انضم"</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gameplay3">
+                                            ما هي الدردشة الصوتية وكيف أستخدمها؟
+                                        </button>
+                                    </h2>
+                                    <div id="gameplay3" class="accordion-collapse collapse" data-bs-parent="#gameplayAccordion">
+                                        <div class="accordion-body">
+                                            <p>الدردشة الصوتية تتيح لك إرسال رسائل صوتية:</p>
+                                            <ul>
+                                                <li>اضغط على أيقونة الميكروفون في الدردشة</li>
+                                                <li>امنح الموقع إذن الوصول للميكروفون</li>
+                                                <li>اضغط واستمر في الضغط للتسجيل</li>
+                                                <li>اتركه لإرسال الرسالة الصوتية</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gameplay4">
+                                            كيف تعمل الأدوار في اللعبة؟
+                                        </button>
+                                    </h2>
+                                    <div id="gameplay4" class="accordion-collapse collapse" data-bs-parent="#gameplayAccordion">
+                                        <div class="accordion-body">
+                                            <p>الأدوار تُوزع عشوائياً في بداية كل لعبة. لمعرفة تفاصيل كل دور، راجع <a href="{{ url_for('rules') }}#roles">صفحة القوانين</a>.</p>
+                                            <div class="role-summary">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <strong>المافيا:</strong> تقتل ليلاً وتتخفى نهاراً
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <strong>المواطنون:</strong> يحاولون كشف المافيا
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <strong>الطبيب:</strong> يحمي الآخرين من القتل
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <strong>المحقق:</strong> يتحقق من هوية اللاعبين
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- المشاكل التقنية -->
+                <section id="technical" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-cog text-secondary"></i> المشاكل التقنية</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="technicalAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical1">
+                                            اللعبة بطيئة أو لا تستجيب، ماذا أفعل؟
+                                        </button>
+                                    </h2>
+                                    <div id="technical1" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                        <div class="accordion-body">
+                                            <p>لحل مشاكل الأداء:</p>
+                                            <ol>
+                                                <li>تأكد من اتصال إنترنت مستقر</li>
+                                                <li>أعد تحميل الصفحة (F5)</li>
+                                                <li>امسح ذاكرة التخزين المؤقت للمتصفح</li>
+                                                <li>جرب متصفحاً آخر (Chrome, Firefox, Safari)</li>
+                                                <li>أغلق التطبيقات الأخرى التي تستهلك الإنترنت</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical2">
+                                            لا أستطيع سماع الرسائل الصوتية؟
+                                        </button>
+                                    </h2>
+                                    <div id="technical2" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                        <div class="accordion-body">
+                                            <p>لحل مشاكل الصوت:</p>
+                                            <ul>
+                                                <li>تأكد من أن مستوى الصوت في الجهاز مرفوع</li>
+                                                <li>تحقق من إعدادات الصوت في ملفك الشخصي</li>
+                                                <li>امنح المتصفح إذن تشغيل الصوت</li>
+                                                <li>جرب سماعات أو مكبرات صوت أخرى</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical3">
+                                            انقطع الاتصال أثناء اللعب؟
+                                        </button>
+                                    </h2>
+                                    <div id="technical3" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                        <div class="accordion-body">
+                                            <p>عند انقطاع الاتصال:</p>
+                                            <ol>
+                                                <li>اللعبة ستحاول إعادة الاتصال تلقائياً</li>
+                                                <li>إذا فشل ذلك، أعد تحميل الصفحة</li>
+                                                <li>ستتمكن من العودة للعبة إذا كانت ما زالت مستمرة</li>
+                                                <li>إذا خرجت من اللعبة نهائياً، لن تتأثر إحصائياتك سلبياً</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- الميزات المتقدمة -->
+                <section id="features" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-star text-info"></i> الميزات المتقدمة</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="featuresAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#features1">
+                                            ما هو الذكاء الاصطناعي في اللعبة؟
+                                        </button>
+                                    </h2>
+                                    <div id="features1" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                                        <div class="accordion-body">
+                                            <p>الذكاء الاصطناعي يساعد في:</p>
+                                            <ul>
+                                                <li><strong>تحليل الرسائل:</strong> كشف المحتوى المشبوه أو الغش</li>
+                                                <li><strong>مؤشر الشك:</strong> تقييم مدى الشك في سلوك اللاعبين</li>
+                                                <li><strong>تحويل الصوت لنص:</strong> لمساعدة ضعاف السمع</li>
+                                                <li><strong>تحليل الإحصائيات:</strong> نصائح لتحسين أدائك</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#features2">
+                                            كيف أحصل على النقاط والإنجازات؟
+                                        </button>
+                                    </h2>
+                                    <div id="features2" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                                        <div class="accordion-body">
+                                            <p>تحصل على النقاط من خلال:</p>
+                                            <ul>
+                                                <li>الفوز في الألعاب (+50-100 نقطة)</li>
+                                                <li>إكمال الألعاب (+10-20 نقطة)</li>
+                                                <li>اللعب بدور صعب بنجاح (نقاط إضافية)</li>
+                                                <li>التفاعل الإيجابي مع اللاعبين</li>
+                                            </ul>
+                                            <p>الإنجازات تُفتح عند تحقيق أهداف معينة مثل الفوز 10 مرات أو لعب 100 ساعة.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#features3">
+                                            كيف أتابع إحصائياتي؟
+                                        </button>
+                                    </h2>
+                                    <div id="features3" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                                        <div class="accordion-body">
+                                            <p>يمكنك مراجعة إحصائياتك في:</p>
+                                            <ul>
+                                                <li><a href="{{ url_for('dashboard') }}">لوحة التحكم</a> - نظرة عامة سريعة</li>
+                                                <li><a href="{{ url_for('my_stats') }}">إحصائياتي المفصلة</a> - تحليل شامل</li>
+                                                <li><a href="{{ url_for('profile') }}">الملف الشخصي</a> - تاريخ الألعاب والإنجازات</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- المجتمع والقوانين -->
+                <section id="community" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-users text-danger"></i> المجتمع والقوانين</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="communityAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#community1">
+                                            ما هي قوانين السلوك في اللعبة؟
+                                        </button>
+                                    </h2>
+                                    <div id="community1" class="accordion-collapse collapse" data-bs-parent="#communityAccordion">
+                                        <div class="accordion-body">
+                                            <p>قوانين السلوك الأساسية:</p>
+                                            <ul>
+                                                <li>احترام جميع اللاعبين</li>
+                                                <li>عدم استخدام ألفاظ نابية أو مسيئة</li>
+                                                <li>عدم الغش أو استخدام معلومات خارجية</li>
+                                                <li>عدم الكشف عن الأدوار بدون مبرر</li>
+                                                <li>اللعب بروح رياضية</li>
+                                            </ul>
+                                            <p>مخالفة هذه القوانين قد تؤدي للحظر.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#community2">
+                                            كيف أبلغ عن لاعب مخالف؟
+                                        </button>
+                                    </h2>
+                                    <div id="community2" class="accordion-collapse collapse" data-bs-parent="#communityAccordion">
+                                        <div class="accordion-body">
+                                            <p>للإبلاغ عن مخالفة:</p>
+                                            <ol>
+                                                <li>اضغط على اسم اللاعب في الدردشة</li>
+                                                <li>اختر "إبلاغ عن مخالفة"</li>
+                                                <li>حدد نوع المخالفة</li>
+                                                <li>أضف وصفاً مختصراً للمشكلة</li>
+                                                <li>اضغط "إرسال البلاغ"</li>
+                                            </ol>
+                                            <p>سيتم مراجعة البلاغ من قبل المشرفين.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#community3">
+                                            ماذا لو تم حظري بالخطأ؟
+                                        </button>
+                                    </h2>
+                                    <div id="community3" class="accordion-collapse collapse" data-bs-parent="#communityAccordion">
+                                        <div class="accordion-body">
+                                            <p>إذا تم حظرك بالخطأ:</p>
+                                            <ol>
+                                                <li>راجع رسالة الحظر لمعرفة السبب</li>
+                                                <li>تواصل معنا عبر نموذج الاتصال أدناه</li>
+                                                <li>اشرح الموقف بالتفصيل</li>
+                                                <li>قدم أي أدلة تدعم موقفك</li>
+                                            </ol>
+                                            <p>سيتم مراجعة حالتك خلال 24-48 ساعة.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- نموذج الاتصال -->
+            <section id="contact" class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-envelope text-success"></i> تواصل معنا</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-4">
+                            لم تجد إجابة لسؤالك؟ تواصل معنا مباشرة وسنرد عليك في أقرب وقت ممكن.
+                        </p>
+                        
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="contactName" class="form-label">الاسم *</label>
+                                    <input type="text" class="form-control" id="contactName" required
+                                           value="{{ current_user.display_name if current_user.is_authenticated else '' }}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="contactEmail" class="form-label">البريد الإلكتروني *</label>
+                                    <input type="email" class="form-control" id="contactEmail" required
+                                           value="{{ current_user.email if current_user.is_authenticated else '' }}">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="contactSubject" class="form-label">الموضوع *</label>
+                                <select class="form-select" id="contactSubject" required>
+                                    <option value="">اختر الموضوع</option>
+                                    <option value="technical">مشكلة تقنية</option>
+                                    <option value="account">مشكلة في الحساب</option>
+                                    <option value="gameplay">سؤال عن اللعبة</option>
+                                    <option value="report">إبلاغ عن مخالفة</option>
+                                    <option value="suggestion">اقتراح تحسين</option>
+                                    <option value="other">أخرى</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="contactMessage" class="form-label">الرسالة *</label>
+                                <textarea class="form-control" id="contactMessage" rows="5" required
+                                          placeholder="اشرح مشكلتك أو سؤالك بالتفصيل..."></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="contactPrivacy" required>
+                                    <label class="form-check-label" for="contactPrivacy">
+                                        أوافق على <a href="#" onclick="showPrivacyModal()">سياسة الخصوصية</a> 
+                                        ومعالجة بياناتي لأغراض الدعم الفني
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> إرسال الرسالة
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- أزرار الإجراءات السريعة -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h5 class="mb-3">إجراءات سريعة</h5>
+                    <div class="btn-group-wrapper">
+                        <a href="{{ url_for('rooms') }}" class="btn btn-success btn-lg me-2 mb-2">
+                            <i class="fas fa-play"></i> ابدأ اللعب
+                        </a>
+                        <a href="{{ url_for('rules') }}" class="btn btn-primary btn-lg me-2 mb-2">
+                            <i class="fas fa-book"></i> قوانين اللعبة
+                        </a>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-info btn-lg me-2 mb-2">
+                            <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                        </a>
+                        <button class="btn btn-warning btn-lg mb-2" onclick="showKeyboardShortcuts()">
+                            <i class="fas fa-keyboard"></i> اختصارات لوحة المفاتيح
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal اختصارات لوحة المفاتيح -->
+<div class="modal fade" id="shortcutsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-keyboard"></i> اختصارات لوحة المفاتيح
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">أثناء اللعب:</h6>
+                        <div class="shortcut-item">
+                            <kbd>Enter</kbd> <span>إرسال رسالة</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>Ctrl</kbd> + <kbd>Enter</kbd> <span>إرسال سريع</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>Space</kbd> <span>تبديل الاستعداد</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>Tab</kbd> <span>التنقل بين اللاعبين</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">عامة:</h6>
+                        <div class="shortcut-item">
+                            <kbd>Ctrl</kbd> + <kbd>/</kbd> <span>إظهار المساعدة</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>Ctrl</kbd> + <kbd>,</kbd> <span>الإعدادات</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>F5</kbd> <span>تحديث الصفحة</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>Esc</kbd> <span>إغلاق النوافذ المنبثقة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.help-page {
+    background: #f8f9fa;
+}
+
+.quick-start-step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-left: 1rem;
+    flex-shrink: 0;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h5 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.step-content p {
+    color: #666;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.accordion-button {
+    font-weight: 600;
+    color: #333;
+}
+
+.accordion-button:not(.collapsed) {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.accordion-body {
+    background: #fafafa;
+}
+
+.role-summary {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.role-summary .row > div {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.role-summary .row > div:last-child {
+    border-bottom: none;
+}
+
+.list-group-item {
+    border: none;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    background: #f8f9fa;
+    color: #667eea;
+    transform: translateX(5px);
+}
+
+.list-group-item.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-color: transparent;
+    color: white;
+}
+
+.list-group-item i {
+    width: 20px;
+    margin-left: 0.5rem;
+}
+
+.faq-container .card {
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 10px;
+}
+
+.btn-group-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.shortcut-item:last-child {
+    border-bottom: none;
+}
+
+.shortcut-item kbd {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    color: #333;
+}
+
+.shortcut-item span {
+    flex: 1;
+    text-align: left;
+    margin-right: 1rem;
+}
+
+#helpSearch {
+    border-radius: 20px;
+    border: 2px solid #e9ecef;
+    transition: border-color 0.3s ease;
+}
+
+#helpSearch:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* تأثيرات التمرير */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* تحسينات الاستجابة */
+@media (max-width: 768px) {
+    .quick-start-step {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .step-number {
+        margin: 0 0 1rem 0;
+    }
+    
+    .btn-group-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-group-wrapper .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* تحسين التباين */
+.text-muted {
+    color: #6c757d !important;
+}
+
+.accordion-button:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+}
+
+/* تحسين النص العربي */
+.accordion-body p,
+.accordion-body li {
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.accordion-body ol,
+.accordion-body ul {
+    padding-right: 1.5rem;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    setupHelpSearch();
+    setupScrollSpy();
+    setupContactForm();
+    
+    // اختصارات لوحة المفاتيح
+    document.addEventListener('keydown', function(e) {
+        // Ctrl + / لإظهار المساعدة
+        if (e.ctrlKey && e.key === '/') {
+            e.preventDefault();
+            showKeyboardShortcuts();
+        }
+        
+        // Esc لإغلاق النوافذ المنبثقة
+        if (e.key === 'Escape') {
+            const modals = document.querySelectorAll('.modal.show');
+            modals.forEach(modal => {
+                bootstrap.Modal.getInstance(modal)?.hide();
+            });
+        }
+    });
+});
+
+// إعداد البحث في المساعدة
+function setupHelpSearch() {
+    const searchInput = document.getElementById('helpSearch');
+    const searchableElements = document.querySelectorAll('.accordion-button, .accordion-body');
+    
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        
+        if (query.length < 2) {
+            // إظهار جميع العناصر
+            searchableElements.forEach(el => {
+                el.style.display = '';
+                // إزالة التمييز
+                el.innerHTML = el.innerHTML.replace(/<mark>/g, '').replace(/<\/mark>/g, '');
+            });
+            return;
+        }
+        
+        searchableElements.forEach(el => {
+            const text = el.textContent.toLowerCase();
+            const originalHTML = el.innerHTML;
+            
+            if (text.includes(query)) {
+                el.style.display = '';
+                
+                // تمييز النص المطابق
+                const regex = new RegExp(`(${query})`, 'gi');
+                el.innerHTML = originalHTML.replace(regex, '<mark>$1</mark>');
+                
+                // فتح الأكورديون المطابق
+                const accordionItem = el.closest('.accordion-item');
+                if (accordionItem) {
+                    const collapseElement = accordionItem.querySelector('.accordion-collapse');
+                    if (collapseElement && !collapseElement.classList.contains('show')) {
+                        new bootstrap.Collapse(collapseElement, { show: true });
+                    }
+                }
+            } else {
+                // إخفاء العناصر غير المطابقة
+                const accordionItem = el.closest('.accordion-item');
+                if (accordionItem) {
+                    accordionItem.style.display = 'none';
+                }
+            }
+        });
+    });
+}
+
+// إعداد تتبع التمرير
+function setupScrollSpy() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.list-group-item[href^="#"]');
+    
+    function updateActiveLink() {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (window.pageYOffset >= sectionTop - 200) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    window.addEventListener('scroll', updateActiveLink);
+    updateActiveLink();
+    
+    // تفعيل التمرير السلس
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+}
+
+// إعداد نموذج الاتصال
+function setupContactForm() {
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            name: document.getElementById('contactName').value,
+            email: document.getElementById('contactEmail').value,
+            subject: document.getElementById('contactSubject').value,
+            message: document.getElementById('contactMessage').value
+        };
+        
+        window.mafiaGame.showLoading('جاري إرسال الرسالة...');
+        
+        try {
+            const response = await fetch('/api/support/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                window.mafiaGame.showNotification('تم إرسال رسالتك بنجاح! سنرد عليك قريباً.', 'success');
+                this.reset();
+            } else {
+                window.mafiaGame.showNotification(result.message || 'فشل في إرسال الرسالة', 'danger');
+            }
+        } catch (error) {
+            window.mafiaGame.showNotification('خطأ في إرسال الرسالة. حاول مرة أخرى.', 'danger');
+        } finally {
+            window.mafiaGame.hideLoading();
+        }
+    });
+}
+
+// إظهار modal اختصارات لوحة المفاتيح
+function showKeyboardShortcuts() {
+    const modal = new bootstrap.Modal(document.getElementById('shortcutsModal'));
+    modal.show();
+}
+
+// إظهار modal سياسة الخصوصية
+function showPrivacyModal() {
+    // يمكن إضافة modal سياسة الخصوصية هنا
+    alert('سياسة الخصوصية: نحن نحترم خصوصيتك ولا نشارك بياناتك مع أطراف ثالثة.');
+}
+
+// بدء لعبة سريعة
+function startQuickGame() {
+    window.mafiaGame.showLoading('جاري البحث عن غرفة مناسبة...');
+    
+    // محاولة الانضمام لغرفة متاحة
+    fetch('/api/room/quick-join', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = `/game/${data.room_code}`;
+            } else {
+                // إذا لم توجد غرفة، انتقل لصفحة الغرف
+                window.location.href = '/rooms';
+            }
+        })
+        .catch(() => {
+            window.location.href = '/rooms';
+        })
+        .finally(() => {
+            window.mafiaGame.hideLoading();
+        });
+}
+
+// تحسين تجربة المستخدم
+document.querySelectorAll('.accordion-button').forEach(button => {
+    button.addEventListener('click', function() {
+        // تأخير بسيط لضمان فتح الأكورديون قبل التمرير
+        setTimeout(() => {
+            this.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }, 300);
+    });
+});
+
+// إضافة تأثيرات بصرية عند التمرير
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// مراقبة البطاقات للتأثيرات
+document.querySelectorAll('.card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(card);
+});
+</script>
+{% endblock %}

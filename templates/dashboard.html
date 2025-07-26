@@ -1,0 +1,591 @@
+{% extends "base.html" %}
+
+{% block title %}لوحة التحكم - لعبة المافيا{% endblock %}
+
+{% block body_class %}dashboard-page{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- ترحيب -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">
+                                مرحباً {{ current_user.display_name }}! 
+                                <span class="badge bg-primary">{{ current_user.role or 'لاعب' }}</span>
+                            </h2>
+                            <p class="text-muted mb-0">
+                                آخر تسجيل دخول: {{ current_user.last_login.strftime('%Y-%m-%d %H:%M') if current_user.last_login }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group">
+                                <a href="{{ url_for('rooms') }}" class="btn btn-primary">
+                                    <i class="fas fa-play"></i> ابدأ اللعب
+                                </a>
+                                <a href="{{ url_for('create_room') }}" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> أنشئ غرفة
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الإحصائيات السريعة -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-primary">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="stat-number">{{ user_stats.total_games_played or 0 }}</div>
+                        <div class="stat-label">إجمالي الألعاب</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="stat-number">{{ "%.1f"|format(user_stats.win_rate or 0) }}%</div>
+                        <div class="stat-label">معدل الفوز</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-info">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="stat-number">{{ user_stats.total_messages_sent or 0 }}</div>
+                        <div class="stat-label">الرسائل المرسلة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="stat-number">{{ user_stats.total_playtime_hours or 0 }}</div>
+                        <div class="stat-label">ساعات اللعب</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- الأنشطة الحديثة -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-history"></i> الأنشطة الحديثة</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_activities %}
+                        <div class="timeline">
+                            {% for activity in recent_activities %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker bg-{{ activity.type_color }}">
+                                    <i class="fas fa-{{ activity.icon }}"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h6 class="timeline-title">{{ activity.title }}</h6>
+                                    <p class="timeline-description">{{ activity.description }}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock"></i> 
+                                        {{ activity.created_at.strftime('%Y-%m-%d %H:%M') }}
+                                    </small>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-inbox text-muted" style="font-size: 3rem;"></i>
+                            <h6 class="mt-3 text-muted">لا توجد أنشطة حديثة</h6>
+                            <p class="text-muted">ابدأ لعبتك الأولى لرؤية الأنشطة هنا</p>
+                            <a href="{{ url_for('rooms') }}" class="btn btn-primary">
+                                <i class="fas fa-play"></i> ابدأ اللعب
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- الغرف النشطة والإعدادات -->
+        <div class="col-lg-4">
+            <!-- الغرف المتاحة -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-door-open"></i> الغرف المتاحة</h6>
+                </div>
+                <div class="card-body">
+                    {% if available_rooms %}
+                        {% for room in available_rooms[:3] %}
+                        <div class="room-quick-item mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ room.name }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        {{ room.current_players }}/{{ room.max_players }} لاعب
+                                    </small>
+                                </div>
+                                <a href="{{ url_for('join_room', room_code=room.room_code) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    انضم
+                                </a>
+                            </div>
+                        </div>
+                        {% if not loop.last %}<hr class="my-2">{% endif %}
+                        {% endfor %}
+                        
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('rooms') }}" class="btn btn-sm btn-primary">
+                                عرض جميع الغرف
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center">
+                            <i class="fas fa-door-closed text-muted" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2 mb-3">لا توجد غرف متاحة حالياً</p>
+                            <a href="{{ url_for('create_room') }}" class="btn btn-sm btn-success">
+                                <i class="fas fa-plus"></i> أنشئ غرفة جديدة
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- الإعدادات السريعة -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-cog"></i> الإعدادات السريعة</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('profile') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user"></i> الملف الشخصي
+                        </a>
+                        <a href="{{ url_for('my_stats') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-bar"></i> إحصائياتي المفصلة
+                        </a>
+                        <a href="{{ url_for('friends') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-users"></i> الأصدقاء
+                        </a>
+                        <a href="{{ url_for('notifications') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-bell"></i> الإشعارات
+                            {% if unread_notifications > 0 %}
+                                <span class="badge bg-danger">{{ unread_notifications }}</span>
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نصائح اليوم -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-lightbulb"></i> نصيحة اليوم</h6>
+                </div>
+                <div class="card-body">
+                    <div class="tip-of-day">
+                        <div class="tip-icon mb-2">
+                            <i class="fas fa-brain text-primary" style="font-size: 2rem;"></i>
+                        </div>
+                        <h6 class="tip-title">{{ daily_tip.title or 'استخدم الذكاء الاصطناعي' }}</h6>
+                        <p class="tip-content text-muted">
+                            {{ daily_tip.content or 'يمكن للذكاء الاصطناعي في اللعبة كشف محاولات الغش وتحليل أنماط اللعب. راقب مؤشر الشك للاعبين الآخرين!' }}
+                        </p>
+                        <button class="btn btn-sm btn-outline-primary" onclick="getNewTip()">
+                            <i class="fas fa-sync"></i> نصيحة جديدة
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الألعاب الحديثة -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-history"></i> الألعاب الحديثة</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_games %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>التاريخ</th>
+                                        <th>الغرفة</th>
+                                        <th>دورك</th>
+                                        <th>النتيجة</th>
+                                        <th>المدة</th>
+                                        <th>اللاعبون</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for game in recent_games %}
+                                    <tr>
+                                        <td>{{ game.finished_at.strftime('%Y-%m-%d %H:%M') if game.finished_at }}</td>
+                                        <td>{{ game.room.name }}</td>
+                                        <td>
+                                            <span class="badge role-{{ game.player_role }}">
+                                                {{ game.role_display_name }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if game.is_winner %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-trophy"></i> فوز
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-danger">
+                                                    <i class="fas fa-times"></i> خسارة
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ game.duration_minutes }} دقيقة</td>
+                                        <td>{{ game.total_players }} لاعب</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-info" 
+                                                    onclick="viewGameDetails({{ game.id }})">
+                                                <i class="fas fa-eye"></i> تفاصيل
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <a href="{{ url_for('game_history') }}" class="btn btn-outline-primary">
+                                عرض جميع الألعاب
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-gamepad text-muted" style="font-size: 3rem;"></i>
+                            <h6 class="mt-3 text-muted">لم تلعب أي ألعاب بعد</h6>
+                            <p class="text-muted">ابدأ لعبتك الأولى واكتشف عالم المافيا المثير!</p>
+                            <a href="{{ url_for('rooms') }}" class="btn btn-primary">
+                                <i class="fas fa-play"></i> ابدأ أول لعبة
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal تفاصيل اللعبة -->
+<div class="modal fade" id="gameDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تفاصيل اللعبة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="gameDetailsContent">
+                <!-- سيتم تحميل المحتوى هنا -->
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.timeline {
+    position: relative;
+}
+
+.timeline-item {
+    display: flex;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.timeline-marker {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+.timeline-content {
+    flex: 1;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 10px;
+    position: relative;
+}
+
+.timeline-content::before {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 15px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid #f8f9fa;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+.room-quick-item {
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.room-quick-item:hover {
+    background: #f8f9fa;
+}
+
+.tip-of-day {
+    text-align: center;
+}
+
+.tip-icon {
+    margin-bottom: 1rem;
+}
+
+.tip-title {
+    color: #333;
+    margin-bottom: 0.75rem;
+}
+
+.tip-content {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// عرض تفاصيل اللعبة
+async function viewGameDetails(gameId) {
+    const modal = new bootstrap.Modal(document.getElementById('gameDetailsModal'));
+    const contentDiv = document.getElementById('gameDetailsContent');
+    
+    // إظهار الـ modal مع loading
+    modal.show();
+    contentDiv.innerHTML = `
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">جاري التحميل...</span>
+            </div>
+            <p class="mt-2">جاري تحميل تفاصيل اللعبة...</p>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch(`/api/game/${gameId}/details`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayGameDetails(data.game);
+        } else {
+            contentDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    خطأ في تحميل البيانات: ${data.message}
+                </div>
+            `;
+        }
+    } catch (error) {
+        contentDiv.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-wifi"></i>
+                خطأ في الاتصال. حاول مرة أخرى.
+            </div>
+        `;
+    }
+}
+
+// عرض تفاصيل اللعبة
+function displayGameDetails(game) {
+    const contentDiv = document.getElementById('gameDetailsContent');
+    
+    contentDiv.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6>معلومات عامة:</h6>
+                <ul class="list-unstyled">
+                    <li><strong>الغرفة:</strong> ${game.room_name}</li>
+                    <li><strong>بدأت:</strong> ${formatDate(game.started_at)}</li>
+                    <li><strong>انتهت:</strong> ${formatDate(game.ended_at)}</li>
+                    <li><strong>المدة:</strong> ${game.duration} دقيقة</li>
+                    <li><strong>الفائز:</strong> ${game.winner === 'civilians' ? 'المواطنون' : 'المافيا'}</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h6>أداؤك:</h6>
+                <ul class="list-unstyled">
+                    <li><strong>دورك:</strong> 
+                        <span class="badge role-${game.your_role}">${game.your_role_name}</span>
+                    </li>
+                    <li><strong>النتيجة:</strong> 
+                        <span class="badge bg-${game.you_won ? 'success' : 'danger'}">
+                            ${game.you_won ? 'فوز' : 'خسارة'}
+                        </span>
+                    </li>
+                    <li><strong>الرسائل المرسلة:</strong> ${game.your_messages}</li>
+                    <li><strong>الأصوات:</strong> ${game.your_votes}</li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <h6>اللاعبون:</h6>
+        <div class="row">
+            ${game.players.map(player => `
+                <div class="col-md-4 mb-2">
+                    <div class="d-flex align-items-center">
+                        <div class="player-avatar me-2">${player.display_name[0]}</div>
+                        <div>
+                            <strong>${player.display_name}</strong>
+                            <br>
+                            <small class="badge role-${player.role}">${player.role_name}</small>
+                            ${player.is_winner ? '<i class="fas fa-crown text-warning"></i>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        
+        ${game.ai_analysis ? `
+            <hr>
+            <h6>تحليل الذكاء الاصطناعي:</h6>
+            <div class="alert alert-info">
+                <p><strong>تقييم أداؤك:</strong> ${game.ai_analysis.performance_rating}/10</p>
+                <p><strong>نصائح للتحسين:</strong></p>
+                <ul>
+                    ${game.ai_analysis.tips.map(tip => `<li>${tip}</li>`).join('')}
+                </ul>
+            </div>
+        ` : ''}
+    `;
+}
+
+// الحصول على نصيحة جديدة
+async function getNewTip() {
+    try {
+        const response = await fetch('/api/tips/random');
+        const data = await response.json();
+        
+        if (data.success) {
+            document.querySelector('.tip-title').textContent = data.tip.title;
+            document.querySelector('.tip-content').textContent = data.tip.content;
+            
+            // تأثير بصري
+            document.querySelector('.tip-of-day').classList.add('pulse');
+            setTimeout(() => {
+                document.querySelector('.tip-of-day').classList.remove('pulse');
+            }, 1000);
+        }
+    } catch (error) {
+        window.mafiaGame.showNotification('فشل في تحميل نصيحة جديدة', 'warning');
+    }
+}
+
+// تحديث الإحصائيات بشكل دوري
+setInterval(async () => {
+    try {
+        const response = await fetch('/api/dashboard/quick-stats');
+        const data = await response.json();
+        
+        if (data.success) {
+            // تحديث الأرقام (يمكن تحسين هذا لاحقاً)
+            console.log('تحديث الإحصائيات:', data.stats);
+        }
+    } catch (error) {
+        // تجاهل الأخطاء في التحديث التلقائي
+    }
+}, 60000); // كل دقيقة
+
+// تنسيق التاريخ
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-SA') + ' ' + 
+           date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+}
+</script>
+{% endblock %}

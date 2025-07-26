@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}خطأ في الخادم - لعبة المافيا{% endblock %}
+
+{% block body_class %}error-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="text-center mt-5">
+                <!-- رقم الخطأ -->
+                <div class="error-code mb-4">
+                    <h1 class="display-1 text-danger">500</h1>
+                </div>
+                
+                <!-- الرسالة -->
+                <div class="error-message mb-4">
+                    <h2 class="h3 mb-3">
+                        <i class="fas fa-server text-muted"></i>
+                        خطأ في الخادم
+                    </h2>
+                    <p class="text-muted lead">
+                        عذراً، حدث خطأ غير متوقع في الخادم. فريقنا التقني يعمل على حل المشكلة.
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>نصيحة:</strong> حاول تحديث الصفحة أو العودة لاحقاً
+                    </div>
+                </div>
+                
+                <!-- الإجراءات -->
+                <div class="error-actions">
+                    <button onclick="location.reload()" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-sync"></i> إعادة المحاولة
+                    </button>
+                    
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg me-3">
+                        <i class="fas fa-home"></i> الصفحة الرئيسية
+                    </a>
+                    
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                        </a>
+                    {% endif %}
+                </div>
+                
+                <!-- معلومات إضافية -->
+                <div class="error-details mt-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-question-circle text-primary"></i>
+                                ماذا يمكنك فعله؟
+                            </h6>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    تحديث الصفحة (F5 أو Ctrl+R)
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    التحقق من اتصال الإنترنت
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    المحاولة مرة أخرى بعد بضع دقائق
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    الاتصال بالدعم الفني إذا استمرت المشكلة
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- معلومات تقنية -->
+                <div class="technical-info mt-4">
+                    <details class="text-start">
+                        <summary class="text-muted">
+                            <i class="fas fa-code"></i>
+                            معلومات تقنية (للمطورين)
+                        </summary>
+                        <div class="mt-3 p-3 bg-light border rounded">
+                            <small class="text-muted">
+                                <strong>الوقت:</strong> {{ moment().format('YYYY-MM-DD HH:mm:ss') }}<br>
+                                <strong>URL:</strong> {{ request.url }}<br>
+                                <strong>Method:</strong> {{ request.method }}<br>
+                                <strong>User Agent:</strong> {{ request.headers.get('User-Agent', 'Unknown') }}
+                            </small>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.error-page {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    min-height: 100vh;
+}
+
+.error-code h1 {
+    font-size: 8rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: shake 1s ease-in-out infinite;
+}
+
+.error-message {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.error-details .card {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 15px;
+}
+
+.technical-info {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.technical-info summary {
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.technical-info summary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.error-actions .btn {
+    margin-bottom: 1rem;
+}
+
+.alert-info {
+    background: rgba(23, 162, 184, 0.1);
+    border: 1px solid rgba(23, 162, 184, 0.3);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// إعادة المحاولة التلقائية كل 30 ثانية
+setTimeout(function() {
+    if (confirm('هل تريد إعادة المحاولة تلقائياً؟')) {
+        location.reload();
+    }
+}, 30000);
+
+// زر إرسال تقرير الخطأ
+function reportError() {
+    const errorData = {
+        url: window.location.href,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        referrer: document.referrer
+    };
+    
+    // هنا يمكن إرسال البيانات لنظام مراقبة الأخطاء
+    console.log('تقرير الخطأ:', errorData);
+    
+    alert('تم إرسال تقرير الخطأ. شكراً لك!');
+}
+</script>
+{% endblock %}

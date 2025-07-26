@@ -1,0 +1,550 @@
+{% extends "base.html" %}
+
+{% block title %}إنشاء غرفة جديدة - لعبة المافيا{% endblock %}
+
+{% block body_class %}create-room-page{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-plus-circle text-success"></i>
+                    إنشاء غرفة جديدة
+                </h1>
+                <p class="lead text-muted">
+                    أنشئ غرفتك الخاصة وادع أصدقاءك للعب معك
+                </p>
+            </div>
+
+            <!-- نموذج إنشاء الغرفة -->
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <form id="createRoomForm" method="POST" action="{{ url_for('api.create_room') }}">
+                        <!-- اسم الغرفة -->
+                        <div class="mb-4">
+                            <label for="roomName" class="form-label required">
+                                <i class="fas fa-signature"></i> اسم الغرفة
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="roomName" 
+                                   name="name" required maxlength="100" 
+                                   placeholder="أدخل اسم جذاب للغرفة">
+                            <div class="form-text">اختر اسماً واضحاً وجذاباً (حتى 100 حرف)</div>
+                        </div>
+
+                        <!-- وصف الغرفة -->
+                        <div class="mb-4">
+                            <label for="roomDescription" class="form-label">
+                                <i class="fas fa-align-left"></i> وصف الغرفة (اختياري)
+                            </label>
+                            <textarea class="form-control" id="roomDescription" name="description" 
+                                      rows="3" maxlength="500" 
+                                      placeholder="وصف مختصر عن نوع اللعبة أو القوانين الخاصة..."></textarea>
+                            <div class="form-text">وصف مختصر يساعد اللاعبين على فهم نوع اللعبة</div>
+                        </div>
+
+                        <!-- إعدادات اللاعبين -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="minPlayers" class="form-label required">
+                                    <i class="fas fa-users"></i> أقل عدد لاعبين
+                                </label>
+                                <select class="form-select" id="minPlayers" name="min_players" required>
+                                    <option value="4" selected>4 لاعبين</option>
+                                    <option value="5">5 لاعبين</option>
+                                    <option value="6">6 لاعبين</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="maxPlayers" class="form-label required">
+                                    <i class="fas fa-users"></i> أكبر عدد لاعبين
+                                </label>
+                                <select class="form-select" id="maxPlayers" name="max_players" required>
+                                    <option value="8">8 لاعبين</option>
+                                    <option value="10">10 لاعبين</option>
+                                    <option value="12" selected>12 لاعب</option>
+                                    <option value="15">15 لاعب</option>
+                                    <option value="20">20 لاعب</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- إعدادات الخصوصية -->
+                        <div class="mb-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-shield-alt"></i> إعدادات الخصوصية
+                                    </h6>
+                                    
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="privacy" 
+                                               id="publicRoom" value="public" checked>
+                                        <label class="form-check-label" for="publicRoom">
+                                            <strong>غرفة عامة</strong>
+                                            <br>
+                                            <small class="text-muted">يمكن لأي شخص رؤية الغرفة والانضمام إليها</small>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="privacy" 
+                                               id="privateRoom" value="private">
+                                        <label class="form-check-label" for="privateRoom">
+                                            <strong>غرفة خاصة</strong>
+                                            <br>
+                                            <small class="text-muted">تحتاج رمز الغرفة للانضمام</small>
+                                        </label>
+                                    </div>
+                                    
+                                    <div id="passwordSection" class="mt-3" style="display: none;">
+                                        <label for="roomPassword" class="form-label">
+                                            <i class="fas fa-key"></i> كلمة مرور الغرفة
+                                        </label>
+                                        <input type="password" class="form-control" id="roomPassword" 
+                                               name="password" maxlength="50" 
+                                               placeholder="أدخل كلمة مرور قوية">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- إعدادات اللعبة -->
+                        <div class="mb-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-cog"></i> إعدادات اللعبة
+                                    </h6>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       id="allowVoiceChat" name="allow_voice_chat" checked>
+                                                <label class="form-check-label" for="allowVoiceChat">
+                                                    <i class="fas fa-microphone"></i> السماح بالدردشة الصوتية
+                                                </label>
+                                            </div>
+                                            
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       id="allowTextChat" name="allow_text_chat" checked>
+                                                <label class="form-check-label" for="allowTextChat">
+                                                    <i class="fas fa-comments"></i> السماح بالدردشة النصية
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       id="autoStart" name="auto_start">
+                                                <label class="form-check-label" for="autoStart">
+                                                    <i class="fas fa-play"></i> البدء التلقائي
+                                                    <br>
+                                                    <small class="text-muted">ابدأ تلقائياً عند وصول الحد الأدنى</small>
+                                                </label>
+                                            </div>
+                                            
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       id="enableAI" name="enable_ai" checked>
+                                                <label class="form-check-label" for="enableAI">
+                                                    <i class="fas fa-robot"></i> تفعيل الذكاء الاصطناعي
+                                                    <br>
+                                                    <small class="text-muted">لكشف الغش وتحليل الرسائل</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- أزرار الإجراءات -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('rooms') }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left"></i> رجوع
+                            </a>
+                            
+                            <div>
+                                <button type="reset" class="btn btn-outline-warning btn-lg me-2">
+                                    <i class="fas fa-undo"></i> إعادة تعيين
+                                </button>
+                                <button type="submit" class="btn btn-success btn-lg" id="createBtn">
+                                    <i class="fas fa-plus"></i> إنشاء الغرفة
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- نصائح -->
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-lightbulb text-warning"></i>
+                        </div>
+                        <h6>نصيحة</h6>
+                        <p class="small">اختر اسماً واضحاً للغرفة ليسهل على الأصدقاء العثور عليها</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-users text-info"></i>
+                        </div>
+                        <h6>عدد اللاعبين</h6>
+                        <p class="small">الحد الأمثل هو 8-12 لاعب لتجربة لعب متوازنة ومثيرة</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-robot text-success"></i>
+                        </div>
+                        <h6>الذكاء الاصطناعي</h6>
+                        <p class="small">يساعد في كشف الغش وتحليل سلوك اللاعبين لضمان لعب نزيه</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.create-room-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.create-room-page .container {
+    position: relative;
+    z-index: 2;
+}
+
+.create-room-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23ffffff10" points="0,1000 1000,0 1000,1000"/></svg>');
+    z-index: 1;
+}
+
+.card {
+    border: none;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-label.required::after {
+    content: " *";
+    color: #dc3545;
+}
+
+.tip-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.tip-card:hover {
+    transform: translateY(-5px);
+}
+
+.tip-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.bg-light {
+    background: #f8f9fa !important;
+    border-radius: 15px;
+}
+
+#passwordSection {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 200px;
+    }
+}
+
+/* تحسين الاستجابة */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .card-body {
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .btn-lg {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .tip-card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* تحسين إمكانية الوصول */
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+.btn:focus {
+    outline: 2px solid #495057;
+    outline-offset: 2px;
+}
+
+/* Loading state */
+.btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('createRoomForm');
+    const createBtn = document.getElementById('createBtn');
+    const privateRoomRadio = document.getElementById('privateRoom');
+    const publicRoomRadio = document.getElementById('publicRoom');
+    const passwordSection = document.getElementById('passwordSection');
+    const passwordInput = document.getElementById('roomPassword');
+    const minPlayersSelect = document.getElementById('minPlayers');
+    const maxPlayersSelect = document.getElementById('maxPlayers');
+
+    // Toggle password section
+    privateRoomRadio.addEventListener('change', function() {
+        if (this.checked) {
+            passwordSection.style.display = 'block';
+            passwordInput.required = true;
+        }
+    });
+
+    publicRoomRadio.addEventListener('change', function() {
+        if (this.checked) {
+            passwordSection.style.display = 'none';
+            passwordInput.required = false;
+            passwordInput.value = '';
+        }
+    });
+
+    // Validate min/max players
+    minPlayersSelect.addEventListener('change', updateMaxPlayers);
+    maxPlayersSelect.addEventListener('change', updateMinPlayers);
+
+    function updateMaxPlayers() {
+        const minValue = parseInt(minPlayersSelect.value);
+        const maxValue = parseInt(maxPlayersSelect.value);
+        
+        if (minValue >= maxValue) {
+            maxPlayersSelect.value = Math.max(minValue + 1, 8);
+        }
+    }
+
+    function updateMinPlayers() {
+        const minValue = parseInt(minPlayersSelect.value);
+        const maxValue = parseInt(maxPlayersSelect.value);
+        
+        if (minValue >= maxValue) {
+            minPlayersSelect.value = Math.max(maxValue - 1, 4);
+        }
+    }
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate form
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+        }
+
+        // Show loading state
+        createBtn.classList.add('loading');
+        createBtn.disabled = true;
+
+        // Collect form data
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+
+        // Convert checkboxes to boolean
+        data.allow_voice_chat = formData.has('allow_voice_chat');
+        data.allow_text_chat = formData.has('allow_text_chat');
+        data.auto_start = formData.has('auto_start');
+        data.enable_ai = formData.has('enable_ai');
+
+        // Set password based on privacy setting
+        if (data.privacy === 'public') {
+            delete data.password;
+        }
+
+        // Send request
+        fetch('/api/room/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                showNotification('تم إنشاء الغرفة بنجاح!', 'success');
+                
+                // Redirect to the new room
+                setTimeout(() => {
+                    window.location.href = `/game/${data.room_code}`;
+                }, 1500);
+            } else {
+                throw new Error(data.message || 'حدث خطأ أثناء إنشاء الغرفة');
+            }
+        })
+        .catch(error => {
+            showNotification(error.message, 'error');
+        })
+        .finally(() => {
+            // Hide loading state
+            createBtn.classList.remove('loading');
+            createBtn.disabled = false;
+        });
+    });
+
+    // Reset form
+    form.addEventListener('reset', function() {
+        setTimeout(() => {
+            passwordSection.style.display = 'none';
+            passwordInput.required = false;
+            form.classList.remove('was-validated');
+        }, 100);
+    });
+});
+
+// Notification function
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 100px; right: 20px; z-index: 1050; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// Form validation messages in Arabic
+(function() {
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('invalid', function() {
+            if (this.validity.valueMissing) {
+                this.setCustomValidity('هذا الحقل مطلوب');
+            } else if (this.validity.tooLong) {
+                this.setCustomValidity('النص طويل جداً');
+            } else if (this.validity.tooShort) {
+                this.setCustomValidity('النص قصير جداً');
+            } else {
+                this.setCustomValidity('القيمة غير صحيحة');
+            }
+        });
+        
+        input.addEventListener('input', function() {
+            this.setCustomValidity('');
+        });
+    });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,723 @@
+{% extends "base.html" %}
+
+{% block title %}الملف الشخصي - لعبة المافيا{% endblock %}
+
+{% block body_class %}profile-page{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- معلومات الملف الشخصي -->
+        <div class="col-lg-4 mb-4">
+            <div class="card profile-card">
+                <div class="card-body text-center">
+                    <div class="profile-avatar-container mb-3">
+                        <img src="{{ current_user.avatar_url or '/static/images/Default_pfp.svg' }}" 
+                             alt="{{ current_user.display_name }}" class="profile-avatar">
+                        <button class="btn btn-sm btn-outline-primary avatar-edit-btn" 
+                                data-bs-toggle="modal" data-bs-target="#avatarModal">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    
+                    <h3 class="profile-name">{{ current_user.display_name }}</h3>
+                    <p class="profile-username text-muted">@{{ current_user.username }}</p>
+                    
+                    <div class="profile-badges mb-3">
+                        {% if current_user.is_admin %}
+                            <span class="badge bg-danger"><i class="fas fa-shield-alt"></i> مدير</span>
+                        {% endif %}
+                        {% if current_user.is_premium %}
+                            <span class="badge bg-warning"><i class="fas fa-crown"></i> مميز</span>
+                        {% endif %}
+                        <span class="badge bg-info">
+                            <i class="fas fa-calendar-alt"></i> 
+                            عضو منذ {{ current_user.created_at.strftime('%Y') }}
+                        </span>
+                    </div>
+                    
+                    <div class="profile-stats-quick">
+                        <div class="row text-center">
+                            <div class="col">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">الألعاب</div>
+                            </div>
+                            <div class="col">
+                                <div class="stat-number">0%</div>
+                                <div class="stat-label">معدل الفوز</div>
+                            </div>
+                            <div class="col">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">الأصدقاء</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions mt-3">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            <i class="fas fa-edit"></i> تحرير الملف الشخصي
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تفاصيل الملف الشخصي -->
+        <div class="col-lg-8">
+            <!-- التبويبات -->
+            <ul class="nav nav-tabs profile-tabs mb-4" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#overview" type="button">
+                        <i class="fas fa-chart-line"></i> نظرة عامة
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#history" type="button">
+                        <i class="fas fa-history"></i> تاريخ الألعاب
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#achievements" type="button">
+                        <i class="fas fa-trophy"></i> الإنجازات
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#settings" type="button">
+                        <i class="fas fa-cog"></i> الإعدادات
+                    </button>
+                </li>
+            </ul>
+
+            <!-- محتوى التبويبات -->
+            <div class="tab-content">
+                <!-- نظرة عامة -->
+                <div class="tab-pane fade show active" id="overview">
+                    <!-- الإحصائيات المفصلة -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-primary">
+                                    <i class="fas fa-gamepad"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number">0</div>
+                                    <div class="stat-label">إجمالي الألعاب</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-success">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number">0%</div>
+                                    <div class="stat-label">معدل الفوز</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-info">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number">0</div>
+                                    <div class="stat-label">ساعات اللعب</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-warning">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number">0</div>
+                                    <div class="stat-label">الرسائل المرسلة</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- أفضل الأدوار -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-mask"></i> أفضل الأدوار</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center">
+                                <i class="fas fa-theater-masks text-muted" style="font-size: 3rem;"></i>
+                                <h6 class="mt-3 text-muted">لا توجد بيانات كافية</h6>
+                                <p class="text-muted">العب المزيد من الألعاب لرؤية إحصائيات الأدوار</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تاريخ الألعاب -->
+                <div class="tab-pane fade" id="history">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-history"></i> تاريخ الألعاب</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center py-5">
+                                <i class="fas fa-gamepad text-muted" style="font-size: 4rem;"></i>
+                                <h4 class="mt-3 text-muted">لم تلعب أي ألعاب بعد</h4>
+                                <p class="text-muted">ابدأ لعبتك الأولى لرؤية تاريخ ألعابك هنا</p>
+                                <a href="{{ url_for('rooms') }}" class="btn btn-primary">
+                                    <i class="fas fa-play"></i> ابدأ اللعب الآن
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الإنجازات -->
+                <div class="tab-pane fade" id="achievements">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-trophy"></i> الإنجازات</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- إنجازات مقفلة -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="achievement-card locked">
+                                        <div class="achievement-icon">
+                                            <i class="fas fa-baby"></i>
+                                        </div>
+                                        <div class="achievement-content">
+                                            <h6>أول خطوة</h6>
+                                            <p class="small text-muted">أكمل لعبتك الأولى</p>
+                                            <div class="progress achievement-progress">
+                                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="achievement-card locked">
+                                        <div class="achievement-icon">
+                                            <i class="fas fa-fire"></i>
+                                        </div>
+                                        <div class="achievement-content">
+                                            <h6>اللاعب النشط</h6>
+                                            <p class="small text-muted">العب 10 ألعاب</p>
+                                            <div class="progress achievement-progress">
+                                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="achievement-card locked">
+                                        <div class="achievement-icon">
+                                            <i class="fas fa-crown"></i>
+                                        </div>
+                                        <div class="achievement-content">
+                                            <h6>الفائز المحترف</h6>
+                                            <p class="small text-muted">حقق معدل فوز 70%</p>
+                                            <div class="progress achievement-progress">
+                                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="achievement-card locked">
+                                        <div class="achievement-icon">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div class="achievement-content">
+                                            <h6>الاجتماعي</h6>
+                                            <p class="small text-muted">أضف 5 أصدقاء</p>
+                                            <div class="progress achievement-progress">
+                                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الإعدادات -->
+                <div class="tab-pane fade" id="settings">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-cog"></i> إعدادات الحساب</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="profileSettingsForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="displayName" class="form-label">الاسم المعروض</label>
+                                        <input type="text" class="form-control" id="displayName" 
+                                               value="{{ current_user.display_name }}">
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">البريد الإلكتروني</label>
+                                        <input type="email" class="form-control" id="email" 
+                                               value="{{ current_user.email }}">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="bio" class="form-label">النبذة الشخصية</label>
+                                    <textarea class="form-control" id="bio" rows="3" 
+                                              placeholder="اكتب نبذة قصيرة عن نفسك...">{{ current_user.bio or '' }}</textarea>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="showOnlineStatus" checked>
+                                            <label class="form-check-label" for="showOnlineStatus">
+                                                إظهار حالة الاتصال
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="allowFriendRequests" checked>
+                                            <label class="form-check-label" for="allowFriendRequests">
+                                                السماح بطلبات الصداقة
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> حفظ التغييرات
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- تأمين الحساب -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-shield-alt"></i> تأمين الحساب</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                    <i class="fas fa-key"></i> تغيير كلمة المرور
+                                </button>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <button class="btn btn-outline-info">
+                                    <i class="fas fa-download"></i> تحميل بياناتي
+                                </button>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                    <i class="fas fa-trash"></i> حذف الحساب
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal تحرير الصورة الشخصية -->
+<div class="modal fade" id="avatarModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تغيير الصورة الشخصية</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <p>قريباً - ميزة تغيير الصورة الشخصية قيد التطوير</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal تحرير الملف الشخصي -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تحرير الملف الشخصي</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <p>قريباً - ميزة تحرير الملف الشخصي قيد التطوير</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-page {
+    background: #f8f9fa;
+}
+
+.profile-card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-edit-btn {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.profile-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.profile-username {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.profile-badges .badge {
+    margin: 0.2rem;
+    font-size: 0.85rem;
+}
+
+.profile-stats-quick .stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.profile-stats-quick .stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.profile-tabs .nav-link {
+    border: none;
+    border-radius: 10px 10px 0 0;
+    color: #6c757d;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.profile-tabs .nav-link.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    margin-left: 1rem;
+}
+
+.stat-content {
+    flex-grow: 1;
+}
+
+.stat-content .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: #2c3e50;
+}
+
+.stat-content .stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.achievement-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.achievement-card.locked {
+    opacity: 0.6;
+    filter: grayscale(50%);
+}
+
+.achievement-card:not(.locked):hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.achievement-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: white;
+    margin-left: 1rem;
+}
+
+.achievement-card.locked .achievement-icon {
+    background: #dee2e6;
+    color: #6c757d;
+}
+
+.achievement-content {
+    flex-grow: 1;
+}
+
+.achievement-content h6 {
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.achievement-progress {
+    height: 6px;
+    margin-top: 0.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* تحسين الاستجابة */
+@media (max-width: 768px) {
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .profile-name {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat-icon {
+        margin: 0 0 1rem 0;
+    }
+    
+    .achievement-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .achievement-icon {
+        margin: 0 0 1rem 0;
+    }
+    
+    .profile-tabs .nav-link {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.8rem;
+    }
+}
+
+/* Animation للعناصر */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card, .achievement-card, .card {
+    animation: fadeInUp 0.6s ease;
+}
+
+/* حالات التحميل */
+.loading {
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadProfileData();
+    setupProfileForms();
+});
+
+// تحميل بيانات الملف الشخصي
+function loadProfileData() {
+    // محاكاة تحميل البيانات من API
+    // في التطبيق الحقيقي ستأتي من الخادم
+}
+
+// إعداد نماذج الملف الشخصي
+function setupProfileForms() {
+    const profileForm = document.getElementById('profileSettingsForm');
+    if (profileForm) {
+        profileForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveProfileSettings();
+        });
+    }
+}
+
+// حفظ إعدادات الملف الشخصي
+function saveProfileSettings() {
+    const formData = new FormData(document.getElementById('profileSettingsForm'));
+    const data = Object.fromEntries(formData);
+    
+    // إرسال البيانات إلى الخادم
+    fetch('/api/profile/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('تم حفظ التغييرات بنجاح', 'success');
+        } else {
+            showNotification(data.message || 'حدث خطأ أثناء الحفظ', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('حدث خطأ في الاتصال', 'error');
+    });
+}
+
+// عرض الإشعارات
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 100px; right: 20px; z-index: 1050; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

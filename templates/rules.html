@@ -1,0 +1,1117 @@
+{% extends "base.html" %}
+
+{% block title %}قوانين لعبة المافيا - لعبة المافيا{% endblock %}
+
+{% block body_class %}rules-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="text-center">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-book text-primary"></i>
+                    قوانين لعبة المافيا
+                </h1>
+                <p class="lead text-muted">
+                    دليل شامل لتعلم كيفية لعب المافيا والفوز بها
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- الفهرس -->
+        <div class="col-lg-3 mb-4">
+            <div class="sticky-top" style="top: 100px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-list"></i> الفهرس</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <a href="#overview" class="list-group-item list-group-item-action">
+                                <i class="fas fa-eye"></i> نظرة عامة
+                            </a>
+                            <a href="#setup" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cog"></i> إعداد اللعبة
+                            </a>
+                            <a href="#roles" class="list-group-item list-group-item-action">
+                                <i class="fas fa-mask"></i> الأدوار
+                            </a>
+                            <a href="#gameplay" class="list-group-item list-group-item-action">
+                                <i class="fas fa-play"></i> طريقة اللعب
+                            </a>
+                            <a href="#phases" class="list-group-item list-group-item-action">
+                                <i class="fas fa-clock"></i> مراحل اللعبة
+                            </a>
+                            <a href="#winning" class="list-group-item list-group-item-action">
+                                <i class="fas fa-trophy"></i> شروط الفوز
+                            </a>
+                            <a href="#strategies" class="list-group-item list-group-item-action">
+                                <i class="fas fa-chess"></i> الاستراتيجيات
+                            </a>
+                            <a href="#etiquette" class="list-group-item list-group-item-action">
+                                <i class="fas fa-handshake"></i> آداب اللعبة
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="col-lg-9">
+            <!-- نظرة عامة -->
+            <section id="overview" class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-eye text-primary"></i> نظرة عامة</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">
+                            لعبة المافيا هي لعبة حفلات اجتماعية تقوم على الخداع والتحليل المنطقي، حيث ينقسم اللاعبون إلى فريقين: 
+                            <strong class="text-primary">المواطنون الشرفاء</strong> و <strong class="text-danger">المافيا</strong>.
+                        </p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="feature-box">
+                                    <div class="feature-icon bg-primary">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="feature-content">
+                                        <h5>4-20 لاعب</h5>
+                                        <p>تدعم اللعبة من 4 إلى 20 لاعب في الغرفة الواحدة</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="feature-box">
+                                    <div class="feature-icon bg-success">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="feature-content">
+                                        <h5>15-45 دقيقة</h5>
+                                        <p>مدة اللعبة الواحدة تتراوح حسب عدد اللاعبين</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>الهدف الأساسي:</strong>
+                            المواطنون يحاولون كشف وإزالة جميع أعضاء المافيا، بينما المافيا تحاول القضاء على المواطنين والسيطرة على المدينة.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- إعداد اللعبة -->
+            <section id="setup" class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-cog text-success"></i> إعداد اللعبة</h3>
+                    </div>
+                    <div class="card-body">
+                        <h5>متطلبات البدء:</h5>
+                        <ul class="checklist">
+                            <li><i class="fas fa-check text-success"></i> 4 لاعبين كحد أدنى</li>
+                            <li><i class="fas fa-check text-success"></i> غرفة أو قناة دردشة</li>
+                            <li><i class="fas fa-check text-success"></i> منظم للعبة (المضيف)</li>
+                            <li><i class="fas fa-check text-success"></i> اتفاق على قوانين اللعبة</li>
+                        </ul>
+
+                        <h5 class="mt-4">توزيع الأدوار:</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>عدد اللاعبين</th>
+                                        <th>مافيا</th>
+                                        <th>مواطنون</th>
+                                        <th>أدوار خاصة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>4-5</td>
+                                        <td>1</td>
+                                        <td>3-4</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>6-7</td>
+                                        <td>2</td>
+                                        <td>3-4</td>
+                                        <td>1 (طبيب)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>8-10</td>
+                                        <td>2-3</td>
+                                        <td>4-5</td>
+                                        <td>2 (طبيب + محقق)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>11-15</td>
+                                        <td>3-4</td>
+                                        <td>6-8</td>
+                                        <td>2-3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>16-20</td>
+                                        <td>4-5</td>
+                                        <td>8-12</td>
+                                        <td>3-4</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- الأدوار -->
+            <section id="roles" class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-mask text-warning"></i> الأدوار</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- المافيا -->
+                        <div class="role-category mb-4">
+                            <h4 class="text-danger">
+                                <i class="fas fa-skull"></i> المافيا
+                            </h4>
+                            
+                            <div class="role-card mafia">
+                                <div class="role-icon">
+                                    <i class="fas fa-mask"></i>
+                                </div>
+                                <div class="role-details">
+                                    <h5>عضو المافيا</h5>
+                                    <p>يعرف هوية زملائه في المافيا ويتعاون معهم لقتل المواطنين ليلاً والتخفي نهاراً.</p>
+                                    <div class="role-abilities">
+                                        <span class="ability-tag">قتل ليلي</span>
+                                        <span class="ability-tag">تواصل مع المافيا</span>
+                                        <span class="ability-tag">تصويت نهاري</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- المواطنون -->
+                        <div class="role-category mb-4">
+                            <h4 class="text-primary">
+                                <i class="fas fa-users"></i> المواطنون
+                            </h4>
+                            
+                            <div class="role-card civilian">
+                                <div class="role-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="role-details">
+                                    <h5>مواطن عادي</h5>
+                                    <p>مواطن شريف يحاول كشف هوية المافيا من خلال التحليل والنقاش.</p>
+                                    <div class="role-abilities">
+                                        <span class="ability-tag">تصويت نهاري</span>
+                                        <span class="ability-tag">نقاش ومراقبة</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- الأدوار الخاصة -->
+                        <div class="role-category">
+                            <h4 class="text-success">
+                                <i class="fas fa-star"></i> الأدوار الخاصة
+                            </h4>
+                            
+                            <div class="row">
+                                <div class="col-lg-6 mb-3">
+                                    <div class="role-card doctor">
+                                        <div class="role-icon">
+                                            <i class="fas fa-user-md"></i>
+                                        </div>
+                                        <div class="role-details">
+                                            <h5>الطبيب</h5>
+                                            <p>يمكنه حماية لاعب واحد كل ليلة من القتل، لكن لا يمكنه حماية نفسه ليلتين متتاليتين.</p>
+                                            <div class="role-abilities">
+                                                <span class="ability-tag">حماية ليلية</span>
+                                                <span class="ability-tag">تصويت نهاري</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-6 mb-3">
+                                    <div class="role-card detective">
+                                        <div class="role-icon">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                        <div class="role-details">
+                                            <h5>المحقق</h5>
+                                            <p>يمكنه التحقق من هوية لاعب واحد كل ليلة لمعرفة ما إذا كان مافيا أم لا.</p>
+                                            <div class="role-abilities">
+                                                <span class="ability-tag">تحقيق ليلي</span>
+                                                <span class="ability-tag">تصويت نهاري</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-6 mb-3">
+                                    <div class="role-card vigilante">
+                                        <div class="role-icon">
+                                            <i class="fas fa-gavel"></i>
+                                        </div>
+                                        <div class="role-details">
+                                            <h5>العدالة الشعبية</h5>
+                                            <p>مواطن يمكنه قتل لاعب واحد ليلاً، لكن إذا قتل مواطناً بريئاً فسيموت هو أيضاً.</p>
+                                            <div class="role-abilities">
+                                                <span class="ability-tag">قتل انتقامي</span>
+                                                <span class="ability-tag">تصويت نهاري</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-6 mb-3">
+                                    <div class="role-card mayor">
+                                        <div class="role-icon">
+                                            <i class="fas fa-crown"></i>
+                                        </div>
+                                        <div class="role-details">
+                                            <h5>العمدة</h5>
+                                            <p>مواطن مؤثر، صوته يُحسب كصوتين في التصويت النهاري.</p>
+                                            <div class="role-abilities">
+                                                <span class="ability-tag">صوت مضاعف</span>
+                                                <span class="ability-tag">قيادة المدينة</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- طريقة اللعب -->
+            <section id="gameplay" class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-play text-info"></i> طريقة اللعب</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="gameplay-flow">
+                            <div class="flow-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h5>توزيع الأدوار</h5>
+                                    <p>يحصل كل لاعب على دور سري. المافيا تعرف بعضها البعض، والبقية لا يعرفون أدوار الآخرين.</p>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h5>مرحلة الليل</h5>
+                                    <p>تعمل الأدوار الخاصة: المافيا تختار ضحية، الطبيب يحمي شخصاً، المحقق يتحقق من هوية شخص.</p>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h5>الكشف الصباحي</h5>
+                                    <p>يُعلن المنظم عن نتائج الليل: من مات، هل نجح الطبيب في الإنقاذ، إلخ.</p>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h5>النقاش النهاري</h5>
+                                    <p>اللاعبون الأحياء يناقشون ويحللون لكشف هوية المشتبه بهم.</p>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <h5>التصويت</h5>
+                                    <p>الجميع يصوتون لإعدام اللاعب الأكثر اشتباهاً. من حصل على أكثر الأصوات يُعدم.</p>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-number">6</div>
+                                <div class="step-content">
+                                    <h5>التكرار</h5>
+                                    <p>العملية تتكرر حتى يفوز أحد الفرق (المافيا أو المواطنون).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- مراحل اللعبة -->
+            <section id="phases" class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-clock text-secondary"></i> مراحل اللعبة</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="phases-container">
+                            <div class="phase-card night">
+                                <div class="phase-icon">
+                                    <i class="fas fa-moon"></i>
+                                </div>
+                                <div class="phase-content">
+                                    <h5>مرحلة الليل</h5>
+                                    <ul>
+                                        <li>جميع اللاعبين يغلقون أعينهم (صمت في الدردشة)</li>
+                                        <li>المافيا تستيقظ وتختار ضحية</li>
+                                        <li>الطبيب يستيقظ ويختار من يحمي</li>
+                                        <li>المحقق يستيقظ ويختار من يتحقق منه</li>
+                                        <li>الأدوار الأخرى تعمل حسب قدراتها</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="phase-card day">
+                                <div class="phase-icon">
+                                    <i class="fas fa-sun"></i>
+                                </div>
+                                <div class="phase-content">
+                                    <h5>مرحلة النهار</h5>
+                                    <ul>
+                                        <li>الجميع يستيقظ</li>
+                                        <li>إعلان نتائج الليل</li>
+                                        <li>النقاش المفتوح بين اللاعبين</li>
+                                        <li>تحليل السلوكيات والتصريحات</li>
+                                        <li>اتهام المشتبه بهم</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="phase-card vote">
+                                <div class="phase-icon">
+                                    <i class="fas fa-vote-yea"></i>
+                                </div>
+                                <div class="phase-content">
+                                    <h5>مرحلة التصويت</h5>
+                                    <ul>
+                                        <li>كل لاعب يصوت لإعدام شخص واحد</li>
+                                        <li>يمكن الامتناع عن التصويت</li>
+                                        <li>اللاعب الذي حصل على أكثر الأصوات يُعدم</li>
+                                        <li>في حالة التعادل، لا يُعدم أحد</li>
+                                        <li>المعدوم يكشف عن دوره الحقيقي</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- شروط الفوز -->
+            <section id="winning" class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-trophy text-warning"></i> شروط الفوز</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="win-condition mafia-win">
+                                    <div class="win-icon">
+                                        <i class="fas fa-skull-crossbones"></i>
+                                    </div>
+                                    <div class="win-content">
+                                        <h5 class="text-danger">فوز المافيا</h5>
+                                        <p>المافيا تفوز عندما:</p>
+                                        <ul>
+                                            <li>عدد المافيا = عدد المواطنين المتبقين</li>
+                                            <li>أو عندما تتمكن من قتل جميع الأدوار الخاصة المهمة</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="win-condition town-win">
+                                    <div class="win-icon">
+                                        <i class="fas fa-hands-helping"></i>
+                                    </div>
+                                    <div class="win-content">
+                                        <h5 class="text-success">فوز المواطنين</h5>
+                                        <p>المواطنون يفوزون عندما:</p>
+                                        <ul>
+                                            <li>يتم إعدام جميع أفراد المافيا</li>
+                                            <li>والمدينة تصبح آمنة تماماً</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>ملاحظة مهمة:</strong> 
+                            في بعض الإصدارات، قد توجد أدوار محايدة لها شروط فوز خاصة بها، 
+                            مثل الجوكر الذي يفوز إذا تم إعدامه بالتصويت.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- الاستراتيجيات -->
+            <section id="strategies" class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chess text-info"></i> الاستراتيجيات</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="strategy-section">
+                                    <h5 class="text-primary">
+                                        <i class="fas fa-shield-alt"></i>
+                                        للمواطنين
+                                    </h5>
+                                    <ul class="strategy-list">
+                                        <li><strong>راقب السلوك:</strong> انتبه لمن يحاول تحويل الانتباه أو يدافع عن المشتبه بهم</li>
+                                        <li><strong>استخدم المنطق:</strong> حلل التصريحات والأفعال بعناية</li>
+                                        <li><strong>احمِ الأدوار المهمة:</strong> لا تكشف عن الطبيب أو المحقق مبكراً</li>
+                                        <li><strong>تعاون:</strong> شارك المعلومات بحكمة مع الآخرين</li>
+                                        <li><strong>انتبه للتحالفات:</strong> المافيا قد تحاول تكوين تحالفات مزيفة</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="strategy-section">
+                                    <h5 class="text-danger">
+                                        <i class="fas fa-mask"></i>
+                                        للمافيا
+                                    </h5>
+                                    <ul class="strategy-list">
+                                        <li><strong>التمويه:</strong> تصرف كمواطن عادي ولا تلفت الانتباه</li>
+                                        <li><strong>اختر الأهداف بحكمة:</strong> اقتل الأدوار المهمة أولاً</li>
+                                        <li><strong>اتهم بحذر:</strong> اتهم الآخرين دون أن تبدو عدوانياً</li>
+                                        <li><strong>دافع عن زملائك بطريقة غير مباشرة:</strong> لا تكن واضحاً في الدفاع</li>
+                                        <li><strong>استغل المعلومات:</strong> استخدم ما تعرفه عن الأدوار لصالحك</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h5 class="text-success">
+                                <i class="fas fa-user-md"></i>
+                                للأدوار الخاصة
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="special-role-tip">
+                                        <h6>الطبيب</h6>
+                                        <ul>
+                                            <li>لا تحمِ نفس الشخص ليلتين متتاليتين</li>
+                                            <li>احمِ المحقق إذا اكتشفت هويته</li>
+                                            <li>لا تكشف عن دورك إلا في حالات الضرورة</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="special-role-tip">
+                                        <h6>المحقق</h6>
+                                        <ul>
+                                            <li>تحقق من المشتبه بهم أولاً</li>
+                                            <li>شارك المعلومات بحذر</li>
+                                            <li>انتبه لمن يحاول منعك من التحقق</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="special-role-tip">
+                                        <h6>العمدة</h6>
+                                        <ul>
+                                            <li>استخدم صوتك المضاعف بحكمة</li>
+                                            <li>قد المدينة في النقاشات</li>
+                                            <li>احذر من كشف دورك مبكراً</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- آداب اللعبة -->
+            <section id="etiquette" class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-handshake text-success"></i> آداب اللعبة</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="etiquette-section">
+                                    <h5 class="text-success">
+                                        <i class="fas fa-check-circle"></i>
+                                        ما يجب فعله
+                                    </h5>
+                                    <ul class="etiquette-list good">
+                                        <li>احترم جميع اللاعبين</li>
+                                        <li>العب الدور المعطى لك بصدق</li>
+                                        <li>شارك في النقاشات بإيجابية</li>
+                                        <li>اقبل النتائج برياضية</li>
+                                        <li>ساعد اللاعبين الجدد</li>
+                                        <li>التزم بالقوانين المتفق عليها</li>
+                                        <li>استمتع باللعبة!</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="etiquette-section">
+                                    <h5 class="text-danger">
+                                        <i class="fas fa-times-circle"></i>
+                                        ما يجب تجنبه
+                                    </h5>
+                                    <ul class="etiquette-list bad">
+                                        <li>الغش أو استخدام معلومات خارجية</li>
+                                        <li>السب أو الإهانات الشخصية</li>
+                                        <li>الكشف عن دورك بدون مبرر</li>
+                                        <li>الاستمرار في اللعب بعد الموت</li>
+                                        <li>استخدام حسابات متعددة</li>
+                                        <li>تجاهل تعليمات المنظم</li>
+                                        <li>إفساد متعة الآخرين</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning mt-4">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>تحذير:</strong>
+                            مخالفة آداب اللعبة قد تؤدي إلى حظرك من الغرف أو من الموقع بالكامل. 
+                            اللعبة أجمل عندما يحترم الجميع القوانين ويلعب بروح رياضية.
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- أزرار التنقل -->
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="btn-group">
+                <a href="{{ url_for('help') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-question-circle"></i> المساعدة
+                </a>
+                <a href="{{ url_for('rooms') }}" class="btn btn-primary">
+                    <i class="fas fa-play"></i> ابدأ اللعب
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.rules-page {
+    background: #f8f9fa;
+}
+
+.feature-box {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    margin-left: 1rem;
+}
+
+.feature-content h5 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.feature-content p {
+    margin-bottom: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.checklist {
+    list-style: none;
+    padding: 0;
+}
+
+.checklist li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.checklist li:last-child {
+    border-bottom: none;
+}
+
+.role-category {
+    margin-bottom: 2rem;
+}
+
+.role-card {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.role-card:hover {
+    transform: translateY(-2px);
+}
+
+.role-card.mafia {
+    background: linear-gradient(45deg, #fff5f5, #fed7d7);
+    border-left: 4px solid #e53e3e;
+}
+
+.role-card.civilian {
+    background: linear-gradient(45deg, #f0f8ff, #e6f3ff);
+    border-left: 4px solid #3182ce;
+}
+
+.role-card.doctor {
+    background: linear-gradient(45deg, #f0fff4, #c6f6d5);
+    border-left: 4px solid #38a169;
+}
+
+.role-card.detective {
+    background: linear-gradient(45deg, #faf5ff, #e9d8fd);
+    border-left: 4px solid #805ad5;
+}
+
+.role-card.vigilante {
+    background: linear-gradient(45deg, #fffaf0, #feebc8);
+    border-left: 4px solid #dd6b20;
+}
+
+.role-card.mayor {
+    background: linear-gradient(45deg, #fffff0, #fefcbf);
+    border-left: 4px solid #d69e2e;
+}
+
+.role-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin-left: 1rem;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+}
+
+.role-details {
+    flex: 1;
+}
+
+.role-details h5 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.role-details p {
+    margin-bottom: 1rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+.role-abilities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.ability-tag {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.gameplay-flow {
+    position: relative;
+}
+
+.flow-step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.flow-step:not(:last-child):after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 50px;
+    width: 2px;
+    height: 40px;
+    background: #e2e8f0;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-left: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h5 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.step-content p {
+    color: #666;
+    margin-bottom: 0;
+}
+
+.phases-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.phase-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.phase-card.night {
+    background: linear-gradient(45deg, #2d3748, #4a5568);
+    color: white;
+}
+
+.phase-card.day {
+    background: linear-gradient(45deg, #fed7aa, #fdba74);
+    color: #333;
+}
+
+.phase-card.vote {
+    background: linear-gradient(45deg, #fecaca, #f87171);
+    color: white;
+}
+
+.phase-icon {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.phase-content h5 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.phase-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.phase-content li {
+    padding: 0.25rem 0;
+    position: relative;
+    padding-right: 1.5rem;
+}
+
+.phase-content li:before {
+    content: '•';
+    position: absolute;
+    right: 0.5rem;
+    font-weight: bold;
+}
+
+.win-condition {
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+}
+
+.mafia-win {
+    background: linear-gradient(45deg, #fff5f5, #fed7d7);
+}
+
+.town-win {
+    background: linear-gradient(45deg, #f0fff4, #c6f6d5);
+}
+
+.win-icon {
+    font-size: 2rem;
+    margin-left: 1rem;
+    margin-top: 0.5rem;
+}
+
+.win-content {
+    flex: 1;
+}
+
+.strategy-section,
+.etiquette-section {
+    height: 100%;
+}
+
+.strategy-list,
+.etiquette-list {
+    list-style: none;
+    padding: 0;
+}
+
+.strategy-list li,
+.etiquette-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+    padding-right: 1.5rem;
+}
+
+.etiquette-list.good li:before {
+    content: '✓';
+    position: absolute;
+    right: 0;
+    color: #38a169;
+    font-weight: bold;
+}
+
+.etiquette-list.bad li:before {
+    content: '✗';
+    position: absolute;
+    right: 0;
+    color: #e53e3e;
+    font-weight: bold;
+}
+
+.special-role-tip {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    height: 100%;
+}
+
+.special-role-tip h6 {
+    color: #667eea;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.special-role-tip ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.special-role-tip li {
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* تحسينات الاستجابة */
+@media (max-width: 768px) {
+    .role-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .role-icon {
+        margin: 0 0 1rem 0;
+    }
+    
+    .phases-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .flow-step {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .step-number {
+        margin: 0 0 1rem 0;
+    }
+    
+    .flow-step:not(:last-child):after {
+        display: none;
+    }
+}
+
+/* تحسين التمرير السلس */
+html {
+    scroll-behavior: smooth;
+}
+
+.list-group-item {
+    border: none;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    background: #f8f9fa;
+    color: #667eea;
+}
+
+.list-group-item.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-color: transparent;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // تفعيل التمرير السلس للروابط الداخلية
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // تحديث الرابط النشط
+                document.querySelectorAll('.list-group-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+            }
+        });
+    });
+    
+    // تتبع التمرير لتحديث الرابط النشط
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.list-group-item');
+    
+    function updateActiveLink() {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (window.pageYOffset >= sectionTop - 200) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    window.addEventListener('scroll', updateActiveLink);
+    updateActiveLink(); // تشغيل أولي
+    
+    // تأثيرات بصرية عند التمرير
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    // مراقبة البطاقات للتأثيرات
+    document.querySelectorAll('.card, .role-card, .phase-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+});
+
+// دالة لطباعة القوانين
+function printRules() {
+    window.print();
+}
+
+// دالة لمشاركة صفحة القوانين
+function shareRules() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'قوانين لعبة المافيا',
+            text: 'تعلم كيفية لعب المافيا - دليل شامل',
+            url: window.location.href
+        });
+    } else {
+        // نسخ الرابط للحافظة
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('تم نسخ رابط القوانين للحافظة!');
+        });
+    }
+}
+</script>
+{% endblock %}

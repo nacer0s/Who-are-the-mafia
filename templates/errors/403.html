@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}الوصول مرفوض - لعبة المافيا{% endblock %}
+
+{% block body_class %}error-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="text-center mt-5">
+                <!-- رقم الخطأ -->
+                <div class="error-code mb-4">
+                    <h1 class="display-1 text-warning">403</h1>
+                </div>
+                
+                <!-- الرسالة -->
+                <div class="error-message mb-4">
+                    <h2 class="h3 mb-3">
+                        <i class="fas fa-ban text-muted"></i>
+                        الوصول مرفوض
+                    </h2>
+                    <p class="text-muted lead">
+                        عذراً، ليس لديك الصلاحية للوصول إلى هذه الصفحة أو المورد المطلوب.
+                    </p>
+                    
+                    {% if not current_user.is_authenticated %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>ملاحظة:</strong> قد تحتاج إلى تسجيل الدخول للوصول لهذه الصفحة
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>تحذير:</strong> هذه الصفحة مخصصة للمدراء أو المستخدمين ذوي الصلاحيات الخاصة
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- الإجراءات -->
+                <div class="error-actions">
+                    {% if not current_user.is_authenticated %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                        </a>
+                        
+                        <a href="{{ url_for('register') }}" class="btn btn-success btn-lg me-3">
+                            <i class="fas fa-user-plus"></i> إنشاء حساب
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                        </a>
+                        
+                        <a href="{{ url_for('rooms') }}" class="btn btn-success btn-lg me-3">
+                            <i class="fas fa-door-open"></i> الغرف
+                        </a>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-home"></i> الصفحة الرئيسية
+                    </a>
+                </div>
+                
+                <!-- معلومات الصلاحيات -->
+                <div class="permissions-info mt-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-shield-alt text-warning"></i>
+                                معلومات الصلاحيات
+                            </h6>
+                            
+                            {% if current_user.is_authenticated %}
+                                <div class="row text-start">
+                                    <div class="col-md-6">
+                                        <h6 class="text-success">صلاحياتك الحالية:</h6>
+                                        <ul class="list-unstyled">
+                                            <li>
+                                                <i class="fas fa-check text-success"></i>
+                                                مستخدم مسجل
+                                            </li>
+                                            <li>
+                                                <i class="fas fa-check text-success"></i>
+                                                إنشاء والانضمام للغرف
+                                            </li>
+                                            <li>
+                                                <i class="fas fa-check text-success"></i>
+                                                المشاركة في الألعاب
+                                            </li>
+                                            <li>
+                                                <i class="fas fa-check text-success"></i>
+                                                عرض الإحصائيات الشخصية
+                                            </li>
+                                            {% if current_user.is_admin %}
+                                                <li>
+                                                    <i class="fas fa-crown text-warning"></i>
+                                                    صلاحيات المدير
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-muted">قد تحتاج إلى:</h6>
+                                        <ul class="list-unstyled">
+                                            <li>
+                                                <i class="fas fa-times text-muted"></i>
+                                                صلاحيات إدارية
+                                            </li>
+                                            <li>
+                                                <i class="fas fa-times text-muted"></i>
+                                                عضوية خاصة
+                                            </li>
+                                            <li>
+                                                <i class="fas fa-times text-muted"></i>
+                                                دعوة من منظم
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text-start">
+                                    <p class="text-muted">
+                                        للحصول على الصلاحيات الكاملة، يرجى:
+                                    </p>
+                                    <ol>
+                                        <li>تسجيل الدخول إلى حسابك</li>
+                                        <li>أو إنشاء حساب جديد إذا لم يكن لديك واحد</li>
+                                        <li>التحقق من بريدك الإلكتروني (إن أمكن)</li>
+                                        <li>طلب صلاحيات إضافية من المدير إذا لزم الأمر</li>
+                                    </ol>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- معلومات الاتصال -->
+                <div class="contact-info mt-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6>
+                                <i class="fas fa-headset text-primary"></i>
+                                تحتاج مساعدة؟
+                            </h6>
+                            <p class="text-muted mb-3">
+                                إذا كنت تعتقد أن هذا خطأ، يمكنك الاتصال بفريق الدعم
+                            </p>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ url_for('help') }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-question-circle"></i> المساعدة
+                                </a>
+                                <button class="btn btn-sm btn-outline-info" onclick="reportAccessIssue()">
+                                    <i class="fas fa-bug"></i> تقرير مشكلة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.error-page {
+    background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+    min-height: 100vh;
+}
+
+.error-code h1 {
+    font-size: 8rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.error-message {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.permissions-info .card,
+.contact-info .card {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 15px;
+}
+
+.permissions-info h6 {
+    border-bottom: 2px solid #f8f9fa;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.permissions-info ul li {
+    padding: 0.25rem 0;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.error-actions .btn {
+    margin-bottom: 1rem;
+}
+
+.alert-info {
+    background: rgba(23, 162, 184, 0.1);
+    border: 1px solid rgba(23, 162, 184, 0.3);
+}
+
+.alert-warning {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function reportAccessIssue() {
+    const issueData = {
+        url: window.location.href,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        referrer: document.referrer,
+        {% if current_user.is_authenticated %}
+        userId: {{ current_user.id }},
+        userRole: '{{ current_user.role or "user" }}'
+        {% else %}
+        userId: null,
+        userRole: 'anonymous'
+        {% endif %}
+    };
+    
+    // هنا يمكن إرسال البيانات لنظام تتبع المشاكل
+    console.log('تقرير مشكلة الوصول:', issueData);
+    
+    alert('تم إرسال تقرير المشكلة. سيتم مراجعته من قبل فريق الدعم.');
+}
+
+// نصيحة تلقائية بعد 10 ثوان
+setTimeout(function() {
+    {% if not current_user.is_authenticated %}
+    if (confirm('هل تريد تسجيل الدخول للحصول على صلاحيات أكثر؟')) {
+        window.location.href = '{{ url_for("login") }}';
+    }
+    {% endif %}
+}, 10000);
+</script>
+{% endblock %}

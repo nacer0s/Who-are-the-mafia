@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}لعبة المافيا{% endblock %}</title>
+    
+    <!-- Bootstrap RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts - Arabic -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-mask"></i>
+                لعبة المافيا
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-home"></i> الرئيسية
+                        </a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('dashboard') }}">
+                                <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('rooms') }}">
+                                <i class="fas fa-door-open"></i> الغرف
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('stats') }}">
+                                <i class="fas fa-chart-bar"></i> الإحصائيات
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+                
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user"></i>
+                                {{ current_user.display_name }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('profile') }}">
+                                    <i class="fas fa-user-edit"></i> الملف الشخصي
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('my_stats') }}">
+                                    <i class="fas fa-chart-line"></i> إحصائياتي
+                                </a></li>
+                                {% if current_user.is_admin %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('admin') }}">
+                                        <i class="fas fa-cog"></i> الإدارة
+                                    </a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">
+                                <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">
+                                <i class="fas fa-user-plus"></i> تسجيل جديد
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mt-3">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light mt-5">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-mask"></i> لعبة المافيا</h5>
+                    <p class="text-muted">لعبة المافيا التفاعلية مع الذكاء الاصطناعي</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h6 class="mb-3">روابط سريعة</h6>
+                    <div class="d-flex justify-content-end gap-3">
+                        <a href="{{ url_for('help') }}" class="text-light">
+                            <i class="fas fa-question-circle"></i> المساعدة
+                        </a>
+                        <a href="{{ url_for('rules') }}" class="text-light">
+                            <i class="fas fa-book"></i> قوانين اللعبة
+                        </a>
+                        <a href="{{ url_for('api_info') }}" class="text-light">
+                            <i class="fas fa-code"></i> وثائق API
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="text-center text-muted">
+                <small>&copy; 2025 لعبة المافيا. تم تطوير هذا المشروع بـ ❤️ بواسطة نصر الدين</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+
+    <!-- Connection Status -->
+    <div id="connection-status" class="position-fixed bottom-0 start-0 m-3" style="z-index: 9999;">
+        <div class="badge bg-success" id="status-online" style="display: none;">
+            <i class="fas fa-wifi"></i> متصل
+        </div>
+        <div class="badge bg-danger" id="status-offline" style="display: none;">
+            <i class="fas fa-wifi"></i> غير متصل
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">جاري التحميل...</span>
+            </div>
+            <div class="mt-2 text-light">
+                <span id="loading-text">جاري التحميل...</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+# Flask Framework
+Flask==2.3.3
+Flask-SocketIO==5.3.6
+Flask-Login==0.6.3
+Flask-CORS==4.0.0
+
+# Database
+Flask-SQLAlchemy==3.0.5
+SQLAlchemy==2.0.23
+pymysql==1.1.0  # للاتصال بـ MySQL
+cryptography==41.0.7  # مطلوب لـ pymysql
+
+# WebSocket Support
+python-socketio==5.9.0
+python-engineio==4.7.1
+
+# Password Hashing & Security
+Werkzeug==2.3.7
+bcrypt==4.0.1
+
+# OpenAI for AI Analysis
+openai>=1.13.0
+
+# Audio Processing for Speech-to-Text
+mutagen==1.47.0  # لمعلومات الملفات الصوتية
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Date and Time Utilities
+python-dateutil==2.8.2
+
+# JSON Processing
+jsonschema==4.19.2
+
+# HTTP Requests (for external APIs)
+requests==2.31.0
+
+# Async Support
+eventlet==0.33.3
+
+# Threading and Concurrency
+threading-utils==0.3
+
+# Development Tools (optional)
+python-debug-tools==1.1.0

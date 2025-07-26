@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+
+{% block title %}تسجيل جديد - لعبة المافيا{% endblock %}
+
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h4>
+                        <i class="fas fa-user-plus"></i>
+                        إنشاء حساب جديد
+                    </h4>
+                    <p class="text-muted mb-0">انضم إلى مجتمع لاعبي المافيا</p>
+                </div>
+                <div class="card-body p-4">
+                    <form id="registerForm">
+                        <div class="row">
+                            <!-- اسم المستخدم -->
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    اسم المستخدم *
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="username" 
+                                       name="username" 
+                                       required
+                                       placeholder="username"
+                                       autocomplete="username"
+                                       pattern="[a-zA-Z0-9_\u0600-\u06FF]+"
+                                       minlength="3"
+                                       maxlength="20">
+                                <div class="form-text">
+                                    3-20 حرف، حروف وأرقام فقط
+                                </div>
+                            </div>
+
+                            <!-- الاسم المعروض -->
+                            <div class="col-md-6 mb-3">
+                                <label for="display_name" class="form-label">
+                                    <i class="fas fa-id-card"></i>
+                                    الاسم المعروض *
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="display_name" 
+                                       name="display_name" 
+                                       required
+                                       placeholder="اسمك في اللعبة"
+                                       maxlength="30">
+                                <div class="form-text">
+                                    الاسم الذي سيراه اللاعبون الآخرون
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- البريد الإلكتروني -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                البريد الإلكتروني
+                            </label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   name="email" 
+                                   placeholder="example@email.com"
+                                   autocomplete="email">
+                            <div class="form-text">
+                                اختياري - لاستعادة كلمة المرور
+                            </div>
+                        </div>
+
+                        <!-- كلمة المرور -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                كلمة المرور *
+                            </label>
+                            <div class="input-group">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="password" 
+                                       required
+                                       placeholder="أدخل كلمة مرور قوية"
+                                       autocomplete="new-password"
+                                       minlength="6">
+                                <button class="btn btn-outline-secondary" 
+                                        type="button" 
+                                        onclick="togglePassword('password')">
+                                    <i class="fas fa-eye" id="password-toggle-icon"></i>
+                                </button>
+                            </div>
+                            <!-- مؤشر قوة كلمة المرور -->
+                            <div class="password-strength mt-2">
+                                <div class="progress" style="height: 4px;">
+                                    <div class="progress-bar" id="password-strength-bar" 
+                                         role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="text-muted" id="password-strength-text">
+                                    قوة كلمة المرور: غير محددة
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- تأكيد كلمة المرور -->
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                تأكيد كلمة المرور *
+                            </label>
+                            <div class="input-group">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="confirm_password" 
+                                       name="confirm_password" 
+                                       required
+                                       placeholder="أعد إدخال كلمة المرور"
+                                       autocomplete="new-password">
+                                <button class="btn btn-outline-secondary" 
+                                        type="button" 
+                                        onclick="togglePassword('confirm_password')">
+                                    <i class="fas fa-eye" id="confirm_password-toggle-icon"></i>
+                                </button>
+                            </div>
+                            <div class="form-text" id="password-match-status"></div>
+                        </div>
+
+                        <!-- الموافقة على الشروط -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                أوافق على 
+                                <a href="{{ url_for('terms') }}" target="_blank" class="text-decoration-none">
+                                    شروط الاستخدام
+                                </a>
+                                و
+                                <a href="{{ url_for('privacy') }}" target="_blank" class="text-decoration-none">
+                                    سياسة الخصوصية
+                                </a>
+                            </label>
+                        </div>
+
+                        <!-- زر التسجيل -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="fas fa-user-plus"></i>
+                                إنشاء الحساب
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <div class="text-muted">
+                        لديك حساب بالفعل؟ 
+                        <a href="{{ url_for('login') }}" class="text-decoration-none">
+                            <strong>سجل دخولك</strong>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نصائح التسجيل -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="text-center mb-3">
+                        <i class="fas fa-lightbulb text-warning"></i>
+                        نصائح لحساب أفضل
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="fas fa-shield-alt text-success mb-2" style="font-size: 1.5rem;"></i>
+                            <h6>اختر كلمة مرور قوية</h6>
+                            <small class="text-muted">
+                                استخدم مزيج من الحروف والأرقام والرموز
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="fas fa-user-friends text-info mb-2" style="font-size: 1.5rem;"></i>
+                            <h6>اختر اسماً مميزاً</h6>
+                            <small class="text-muted">
+                                الاسم المعروض سيراه جميع اللاعبين
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="fas fa-envelope text-warning mb-2" style="font-size: 1.5rem;"></i>
+                            <h6>أضف بريدك الإلكتروني</h6>
+                            <small class="text-muted">
+                                لاستعادة حسابك في حالة نسيان كلمة المرور
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// تبديل إظهار/إخفاء كلمة المرور
+function togglePassword(inputId) {
+    const passwordInput = document.getElementById(inputId);
+    const toggleIcon = document.getElementById(`${inputId}-toggle-icon`);
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+// فحص قوة كلمة المرور
+function checkPasswordStrength(password) {
+    let strength = 0;
+    let feedback = '';
+    
+    if (password.length >= 6) strength += 20;
+    if (password.length >= 8) strength += 10;
+    if (/[a-z]/.test(password)) strength += 15;
+    if (/[A-Z]/.test(password)) strength += 15;
+    if (/[0-9]/.test(password)) strength += 15;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+    
+    if (strength < 30) {
+        feedback = 'ضعيفة جداً';
+        return { strength, feedback, color: 'danger' };
+    } else if (strength < 50) {
+        feedback = 'ضعيفة';
+        return { strength, feedback, color: 'warning' };
+    } else if (strength < 75) {
+        feedback = 'متوسطة';
+        return { strength, feedback, color: 'info' };
+    } else if (strength < 90) {
+        feedback = 'قوية';
+        return { strength, feedback, color: 'success' };
+    } else {
+        feedback = 'قوية جداً';
+        return { strength, feedback, color: 'success' };
+    }
+}
+
+// التحقق من تطابق كلمات المرور
+function checkPasswordMatch() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    const statusElement = document.getElementById('password-match-status');
+    
+    if (confirmPassword === '') {
+        statusElement.innerHTML = '';
+        return true;
+    }
+    
+    if (password === confirmPassword) {
+        statusElement.innerHTML = '<i class="fas fa-check text-success"></i> كلمات المرور متطابقة';
+        statusElement.className = 'form-text text-success';
+        return true;
+    } else {
+        statusElement.innerHTML = '<i class="fas fa-times text-danger"></i> كلمات المرور غير متطابقة';
+        statusElement.className = 'form-text text-danger';
+        return false;
+    }
+}
+
+// التحقق من صحة اسم المستخدم
+function validateUsername() {
+    const username = document.getElementById('username').value;
+    const pattern = /^[a-zA-Z0-9_\u0600-\u06FF]+$/;
+    
+    if (username.length < 3) {
+        return { valid: false, message: 'اسم المستخدم قصير جداً' };
+    }
+    
+    if (username.length > 20) {
+        return { valid: false, message: 'اسم المستخدم طويل جداً' };
+    }
+    
+    if (!pattern.test(username)) {
+        return { valid: false, message: 'اسم المستخدم يحتوي على أحرف غير مسموحة' };
+    }
+    
+    return { valid: true, message: 'اسم المستخدم صالح' };
+}
+
+// ربط الأحداث
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const usernameInput = document.getElementById('username');
+    const strengthBar = document.getElementById('password-strength-bar');
+    const strengthText = document.getElementById('password-strength-text');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // فحص قوة كلمة المرور عند الكتابة
+    passwordInput.addEventListener('input', function() {
+        const result = checkPasswordStrength(this.value);
+        
+        strengthBar.style.width = result.strength + '%';
+        strengthBar.className = `progress-bar bg-${result.color}`;
+        strengthText.textContent = `قوة كلمة المرور: ${result.feedback}`;
+        strengthText.className = `text-${result.color} small`;
+        
+        // فحص التطابق أيضاً
+        checkPasswordMatch();
+        validateForm();
+    });
+    
+    // فحص تطابق كلمة المرور عند الكتابة
+    confirmPasswordInput.addEventListener('input', function() {
+        checkPasswordMatch();
+        validateForm();
+    });
+    
+    // فحص اسم المستخدم
+    usernameInput.addEventListener('input', function() {
+        const result = validateUsername();
+        const feedback = this.parentNode.querySelector('.username-feedback');
+        
+        if (feedback) feedback.remove();
+        
+        if (this.value.length > 0) {
+            const feedbackElement = document.createElement('small');
+            feedbackElement.className = `username-feedback text-${result.valid ? 'success' : 'danger'}`;
+            feedbackElement.innerHTML = `<i class="fas fa-${result.valid ? 'check' : 'times'}"></i> ${result.message}`;
+            this.parentNode.appendChild(feedbackElement);
+        }
+        
+        validateForm();
+    });
+    
+    // التحقق من صحة النموذج بالكامل
+    function validateForm() {
+        const username = document.getElementById('username').value;
+        const displayName = document.getElementById('display_name').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const terms = document.getElementById('terms').checked;
+        
+        const usernameValid = validateUsername().valid;
+        const passwordStrong = checkPasswordStrength(password).strength >= 50;
+        const passwordMatch = password === confirmPassword && password.length > 0;
+        
+        const isValid = username.length >= 3 && 
+                       displayName.length >= 1 && 
+                       usernameValid &&
+                       passwordStrong && 
+                       passwordMatch && 
+                       terms;
+        
+        submitBtn.disabled = !isValid;
+        
+        if (isValid) {
+            submitBtn.classList.remove('btn-secondary');
+            submitBtn.classList.add('btn-primary');
+        } else {
+            submitBtn.classList.remove('btn-primary');
+            submitBtn.classList.add('btn-secondary');
+        }
+    }
+    
+    // فحص شروط الاستخدام
+    document.getElementById('terms').addEventListener('change', validateForm);
+    document.getElementById('display_name').addEventListener('input', validateForm);
+    
+    // التحقق الأولي
+    validateForm();
+});
+
+// إنشاء اسم مستخدم تلقائي من الاسم المعروض
+document.getElementById('display_name').addEventListener('input', function() {
+    const usernameInput = document.getElementById('username');
+    
+    // إنشاء اسم مستخدم تلقائي إذا كان فارغاً
+    if (!usernameInput.value) {
+        let suggestion = this.value
+            .toLowerCase()
+            .replace(/\s+/g, '_')
+            .replace(/[^\w\u0600-\u06FF]/g, '')
+            .substring(0, 15);
+        
+        if (suggestion) {
+            usernameInput.value = suggestion;
+            usernameInput.dispatchEvent(new Event('input'));
+        }
+    }
+});
+</script>
+{% endblock %}

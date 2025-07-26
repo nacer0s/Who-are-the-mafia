@@ -1,0 +1,1248 @@
+{% extends "base.html" %}
+
+{% block title %}لوحة الإدارة - لعبة المافيا{% endblock %}
+
+{% block body_class %}admin-page{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">
+                                <i class="fas fa-shield-alt"></i>
+                                لوحة الإدارة
+                            </h2>
+                            <p class="mb-0 opacity-75">
+                                إدارة شاملة للموقع واللاعبين والألعاب
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group">
+                                <button class="btn btn-light" onclick="refreshDashboard()">
+                                    <i class="fas fa-sync"></i> تحديث
+                                </button>
+                                <button class="btn btn-outline-light" onclick="showSystemStatus()">
+                                    <i class="fas fa-server"></i> حسالة النظام
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الإحصائيات الرئيسية -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="admin-stat-card">
+                <div class="stat-icon bg-success">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">إجمالي المستخدمين</div>
+                    <div class="stat-meta">
+                        <span class="text-success">+<span id="newUsersToday">0</span></span> اليوم
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="admin-stat-card">
+                <div class="stat-icon bg-info">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="activeGames">0</div>
+                    <div class="stat-label">الألعاب النشطة</div>
+                    <div class="stat-meta">
+                        <span class="text-info"><span id="totalGamesToday">0</span></span> لعبة اليوم
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="admin-stat-card">
+                <div class="stat-icon bg-warning">
+                    <i class="fas fa-door-open"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="activeRooms">0</div>
+                    <div class="stat-label">الغرف النشطة</div>
+                    <div class="stat-meta">
+                        <span class="text-warning"><span id="roomsCreatedToday">0</span></span> غرفة جديدة
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="admin-stat-card">
+                <div class="stat-icon bg-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="pendingReports">0</div>
+                    <div class="stat-label">البلاغات المعلقة</div>
+                    <div class="stat-meta">
+                        <span class="text-danger"><span id="reportsToday">0</span></span> بلاغ جديد
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- إدارة المستخدمين -->
+        <div class="col-lg-8 mb-4">
+            <!-- الألعاب النشطة -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-play-circle text-success"></i> الألعاب النشطة</h5>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-secondary" onclick="refreshActiveGames()">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="showEndAllGamesModal()">
+                                <i class="fas fa-stop"></i> إيقاف الكل
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="activeGamesTable">
+                            <thead>
+                                <tr>
+                                    <th>الغرفة</th>
+                                    <th>اللاعبون</th>
+                                    <th>المدة</th>
+                                    <th>المرحلة</th>
+                                    <th>المنظم</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- سيتم تحميل البيانات هنا -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- إدارة المستخدمين -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-users text-primary"></i> إدارة المستخدمين</h5>
+                        <div class="input-group" style="width: 300px;">
+                            <input type="text" class="form-control form-control-sm" 
+                                   id="userSearchInput" placeholder="البحث عن مستخدم...">
+                            <button class="btn btn-outline-secondary btn-sm" onclick="searchUsers()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>المستخدم</th>
+                                    <th>البريد الإلكتروني</th>
+                                    <th>تاريخ التسجيل</th>
+                                    <th>الألعاب</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- سيتم تحميل البيانات هنا -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- pagination -->
+                    <nav>
+                        <ul class="pagination justify-content-center" id="usersPagination">
+                            <!-- سيتم إنشاء أزرار التنقل هنا -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- مراقبة النظام -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line text-info"></i> مراقبة النظام</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <i class="fas fa-microchip text-primary"></i>
+                                    <span>استخدام المعالج</span>
+                                </div>
+                                <div class="metric-value">
+                                    <span id="cpuUsage">0</span>%
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" id="cpuProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <i class="fas fa-memory text-success"></i>
+                                    <span>استخدام الذاكرة</span>
+                                </div>
+                                <div class="metric-value">
+                                    <span id="memoryUsage">0</span>%
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" id="memoryProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <i class="fas fa-database text-warning"></i>
+                                    <span>قاعدة البيانات</span>
+                                </div>
+                                <div class="metric-value">
+                                    <span id="dbConnections">0</span> اتصال
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" id="dbProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <canvas id="systemMetricsChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الشريط الجانبي -->
+        <div class="col-lg-4">
+            <!-- البلاغات -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6><i class="fas fa-flag text-danger"></i> البلاغات الأخيرة</h6>
+                        <a href="#" onclick="showAllReports()" class="btn btn-sm btn-outline-primary">
+                            عرض الكل
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="recentReportsList" class="list-group list-group-flush">
+                        <!-- سيتم تحميل البلاغات هنا -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- المستخدمون الجدد -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-user-plus text-success"></i> المستخدمون الجدد</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div id="recentUsersList" class="list-group list-group-flush">
+                        <!-- سيتم تحميل المستخدمين هنا -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- إجراءات سريعة -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-bolt text-warning"></i> إجراءات سريعة</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="sendGlobalAnnouncement()">
+                            <i class="fas fa-bullhorn"></i> إعلان عام
+                        </button>
+                        <button class="btn btn-outline-success" onclick="showSystemMaintenanceModal()">
+                            <i class="fas fa-tools"></i> وضع الصيانة
+                        </button>
+                        <button class="btn btn-outline-info" onclick="exportSystemLogs()">
+                            <i class="fas fa-file-export"></i> تصدير السجلات
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="clearCacheData()">
+                            <i class="fas fa-broom"></i> مسح الذاكرة المؤقتة
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="showBackupModal()">
+                            <i class="fas fa-database"></i> نسخ احتياطي
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- السجلات الحديثة -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-file-alt text-secondary"></i> السجلات الحديثة</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div id="recentLogsList" class="admin-logs">
+                        <!-- سيتم تحميل السجلات هنا -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal تفاصيل المستخدم -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تفاصيل المستخدم</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="userDetailsContent">
+                <!-- سيتم تحميل تفاصيل المستخدم هنا -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-warning" onclick="banUser()">
+                        <i class="fas fa-ban"></i> حظر
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="unbanUser()">
+                        <i class="fas fa-check"></i> إلغاء الحظر
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="deleteUser()">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal الإعلان العام -->
+<div class="modal fade" id="announcementModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">إرسال إعلان عام</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="announcementForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="announcementTitle" class="form-label">عنوان الإعلان</label>
+                        <input type="text" class="form-control" id="announcementTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="announcementMessage" class="form-label">نص الإعلان</label>
+                        <textarea class="form-control" id="announcementMessage" rows="4" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="announcementType" class="form-label">نوع الإعلان</label>
+                        <select class="form-select" id="announcementType">
+                            <option value="info">معلومات</option>
+                            <option value="warning">تحذير</option>
+                            <option value="success">نجاح</option>
+                            <option value="error">خطأ</option>
+                        </select>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="pushNotification">
+                        <label class="form-check-label" for="pushNotification">
+                            إرسال كإشعار فوري
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-bullhorn"></i> إرسال الإعلان
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal وضع الصيانة -->
+<div class="modal fade" id="maintenanceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">وضع الصيانة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="maintenanceForm">
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>تحذير:</strong> سيتم منع جميع المستخدمين من الوصول للموقع ما عدا المدراء.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="maintenanceMessage" class="form-label">رسالة الصيانة</label>
+                        <textarea class="form-control" id="maintenanceMessage" rows="3" 
+                                  placeholder="الموقع في وضع الصيانة حالياً. سنعود قريباً!"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="maintenanceDuration" class="form-label">المدة المتوقعة (بالدقائق)</label>
+                        <input type="number" class="form-control" id="maintenanceDuration" 
+                               min="5" max="1440" value="30">
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="allowAdminAccess" checked>
+                        <label class="form-check-label" for="allowAdminAccess">
+                            السماح للمدراء بالوصول
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-tools"></i> تفعيل وضع الصيانة
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-page {
+    background: #f8f9fa;
+}
+
+.admin-stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin-left: 1rem;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-meta {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.metric-card {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.metric-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.metric-header i {
+    margin-left: 0.5rem;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.progress {
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+}
+
+.list-group-item {
+    border: none;
+    padding: 0.75rem 1rem;
+    transition: background 0.3s ease;
+}
+
+.list-group-item:hover {
+    background: #f8f9fa;
+}
+
+.report-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+}
+
+.report-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    margin-left: 0.75rem;
+}
+
+.report-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.report-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.report-meta {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    margin-left: 0.75rem;
+}
+
+.user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.user-email {
+    font-size: 0.8rem;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-logs {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.log-item {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.8rem;
+}
+
+.log-item:last-child {
+    border-bottom: none;
+}
+
+.log-time {
+    color: #999;
+    font-size: 0.7rem;
+}
+
+.log-level {
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.log-level.info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.log-level.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.log-level.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.log-level.success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.table td {
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.badge {
+    font-size: 0.7rem;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+
+.btn-group .btn:last-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+/* تحسينات الاستجابة */
+@media (max-width: 768px) {
+    .admin-stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat-icon {
+        margin: 0 0 1rem 0;
+    }
+    
+    .metric-card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* تأثيرات التحميل */
+.loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* تحسين ألوان البطاقات */
+.card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    border-radius: 15px 15px 0 0;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let systemMetricsChart;
+let currentUserId = null;
+let currentPage = 1;
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardData();
+    setupCharts();
+    setupEventListeners();
+    
+    // تحديث البيانات كل 30 ثانية
+    setInterval(loadDashboardData, 30000);
+    setInterval(updateSystemMetrics, 10000);
+});
+
+// تحميل بيانات لوحة الإدارة
+async function loadDashboardData() {
+    try {
+        const response = await fetch('/api/admin/dashboard');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateMainStats(data.stats);
+            updateActiveGames(data.active_games);
+            updateRecentUsers(data.recent_users);
+            updateRecentReports(data.recent_reports);
+            updateRecentLogs(data.recent_logs);
+        }
+    } catch (error) {
+        console.error('خطأ في تحميل بيانات لوحة الإدارة:', error);
+    }
+}
+
+// تحديث الإحصائيات الرئيسية
+function updateMainStats(stats) {
+    document.getElementById('totalUsers').textContent = stats.total_users || 0;
+    document.getElementById('newUsersToday').textContent = stats.new_users_today || 0;
+    document.getElementById('activeGames').textContent = stats.active_games || 0;
+    document.getElementById('totalGamesToday').textContent = stats.total_games_today || 0;
+    document.getElementById('activeRooms').textContent = stats.active_rooms || 0;
+    document.getElementById('roomsCreatedToday').textContent = stats.rooms_created_today || 0;
+    document.getElementById('pendingReports').textContent = stats.pending_reports || 0;
+    document.getElementById('reportsToday').textContent = stats.reports_today || 0;
+}
+
+// تحديث الألعاب النشطة
+function updateActiveGames(games) {
+    const tbody = document.querySelector('#activeGamesTable tbody');
+    
+    if (!games || games.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">لا توجد ألعاب نشطة</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = games.map(game => `
+        <tr>
+            <td>
+                <strong>${game.room_name}</strong>
+                <br><small class="text-muted">${game.room_code}</small>
+            </td>
+            <td>${game.current_players}/${game.max_players}</td>
+            <td>${formatDuration(game.duration)}</td>
+            <td>
+                <span class="badge bg-${getPhaseColor(game.phase)}">
+                    ${getPhaseText(game.phase)}
+                </span>
+            </td>
+            <td>${game.host_name}</td>
+            <td>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-info" onclick="viewGame('${game.room_code}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="pauseGame('${game.room_code}')">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="endGame('${game.room_code}')">
+                        <i class="fas fa-stop"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// تحديث المستخدمين الجدد
+function updateRecentUsers(users) {
+    const container = document.getElementById('recentUsersList');
+    
+    if (!users || users.length === 0) {
+        container.innerHTML = '<div class="p-3 text-center text-muted">لا يوجد مستخدمون جدد</div>';
+        return;
+    }
+    
+    container.innerHTML = users.slice(0, 5).map(user => `
+        <div class="user-item list-group-item-action" onclick="showUserDetails(${user.id})">
+            <div class="user-avatar">${user.display_name[0]}</div>
+            <div class="user-info">
+                <div class="user-name">${user.display_name}</div>
+                <div class="user-email">${user.email}</div>
+            </div>
+            <small class="text-muted">${formatTimeAgo(user.created_at)}</small>
+        </div>
+    `).join('');
+}
+
+// تحديث البلاغات الحديثة
+function updateRecentReports(reports) {
+    const container = document.getElementById('recentReportsList');
+    
+    if (!reports || reports.length === 0) {
+        container.innerHTML = '<div class="p-3 text-center text-muted">لا توجد بلاغات جديدة</div>';
+        return;
+    }
+    
+    container.innerHTML = reports.slice(0, 5).map(report => `
+        <div class="report-item list-group-item-action" onclick="showReportDetails(${report.id})">
+            <div class="report-icon bg-${getReportTypeColor(report.type)}">
+                <i class="fas fa-${getReportTypeIcon(report.type)}"></i>
+            </div>
+            <div class="report-content">
+                <div class="report-title">${report.title}</div>
+                <div class="report-meta">
+                    من: ${report.reporter_name} • ${formatTimeAgo(report.created_at)}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// تحديث السجلات الحديثة
+function updateRecentLogs(logs) {
+    const container = document.getElementById('recentLogsList');
+    
+    if (!logs || logs.length === 0) {
+        container.innerHTML = '<div class="p-3 text-center text-muted">لا توجد سجلات حديثة</div>';
+        return;
+    }
+    
+    container.innerHTML = logs.slice(0, 10).map(log => `
+        <div class="log-item">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="log-level ${log.level}">${log.level.toUpperCase()}</span>
+                    <span>${log.message}</span>
+                </div>
+                <small class="log-time">${formatTime(log.created_at)}</small>
+            </div>
+        </div>
+    `).join('');
+}
+
+// إعداد الرسوم البيانية
+function setupCharts() {
+    const ctx = document.getElementById('systemMetricsChart').getContext('2d');
+    systemMetricsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'المعالج (%)',
+                data: [],
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                tension: 0.4
+            }, {
+                label: 'الذاكرة (%)',
+                data: [],
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
+        }
+    });
+    
+    updateSystemMetrics();
+}
+
+// تحديث مقاييس النظام
+async function updateSystemMetrics() {
+    try {
+        const response = await fetch('/api/admin/system-metrics');
+        const data = await response.json();
+        
+        if (data.success) {
+            const metrics = data.metrics;
+            
+            // تحديث المقاييس الحالية
+            document.getElementById('cpuUsage').textContent = Math.round(metrics.cpu_usage);
+            document.getElementById('memoryUsage').textContent = Math.round(metrics.memory_usage);
+            document.getElementById('dbConnections').textContent = metrics.db_connections;
+            
+            // تحديث أشرطة التقدم
+            document.getElementById('cpuProgress').style.width = `${metrics.cpu_usage}%`;
+            document.getElementById('memoryProgress').style.width = `${metrics.memory_usage}%`;
+            document.getElementById('dbProgress').style.width = `${(metrics.db_connections / 100) * 100}%`;
+            
+            // تحديث الرسم البياني
+            const now = new Date().toLocaleTimeString();
+            if (systemMetricsChart.data.labels.length > 20) {
+                systemMetricsChart.data.labels.shift();
+                systemMetricsChart.data.datasets[0].data.shift();
+                systemMetricsChart.data.datasets[1].data.shift();
+            }
+            
+            systemMetricsChart.data.labels.push(now);
+            systemMetricsChart.data.datasets[0].data.push(metrics.cpu_usage);
+            systemMetricsChart.data.datasets[1].data.push(metrics.memory_usage);
+            systemMetricsChart.update('none');
+        }
+    } catch (error) {
+        console.error('خطأ في تحميل مقاييس النظام:', error);
+    }
+}
+
+// إعداد مستمعي الأحداث
+function setupEventListeners() {
+    // نموذج الإعلان العام
+    document.getElementById('announcementForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await sendAnnouncement();
+    });
+    
+    // نموذج وضع الصيانة
+    document.getElementById('maintenanceForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await enableMaintenanceMode();
+    });
+    
+    // البحث عن المستخدمين
+    document.getElementById('userSearchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchUsers();
+        }
+    });
+}
+
+// عرض تفاصيل المستخدم
+async function showUserDetails(userId) {
+    currentUserId = userId;
+    
+    try {
+        const response = await fetch(`/api/admin/user/${userId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            const user = data.user;
+            document.getElementById('userDetailsContent').innerHTML = `
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <div class="user-avatar-large">${user.display_name[0]}</div>
+                        <h5 class="mt-2">${user.display_name}</h5>
+                        <p class="text-muted">${user.email}</p>
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table table-sm">
+                            <tr><td><strong>معرف المستخدم:</strong></td><td>${user.id}</td></tr>
+                            <tr><td><strong>تاريخ التسجيل:</strong></td><td>${formatDate(user.created_at)}</td></tr>
+                            <tr><td><strong>آخر دخول:</strong></td><td>${formatDate(user.last_seen)}</td></tr>
+                            <tr><td><strong>إجمالي الألعاب:</strong></td><td>${user.total_games}</td></tr>
+                            <tr><td><strong>معدل الفوز:</strong></td><td>${user.win_rate}%</td></tr>
+                            <tr><td><strong>النقاط:</strong></td><td>${user.points}</td></tr>
+                            <tr><td><strong>الحالة:</strong></td><td>
+                                <span class="badge bg-${user.is_banned ? 'danger' : 'success'}">
+                                    ${user.is_banned ? 'محظور' : 'نشط'}
+                                </span>
+                            </td></tr>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+            modal.show();
+        }
+    } catch (error) {
+        window.mafiaGame.showNotification('خطأ في تحميل تفاصيل المستخدم', 'danger');
+    }
+}
+
+// إرسال إعلان عام
+function sendGlobalAnnouncement() {
+    const modal = new bootstrap.Modal(document.getElementById('announcementModal'));
+    modal.show();
+}
+
+async function sendAnnouncement() {
+    const data = {
+        title: document.getElementById('announcementTitle').value,
+        message: document.getElementById('announcementMessage').value,
+        type: document.getElementById('announcementType').value,
+        push_notification: document.getElementById('pushNotification').checked
+    };
+    
+    try {
+        const response = await fetch('/api/admin/announcement', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.mafiaGame.showNotification('تم إرسال الإعلان بنجاح', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('announcementModal')).hide();
+            document.getElementById('announcementForm').reset();
+        } else {
+            window.mafiaGame.showNotification(result.message, 'danger');
+        }
+    } catch (error) {
+        window.mafiaGame.showNotification('خطأ في إرسال الإعلان', 'danger');
+    }
+}
+
+// تفعيل وضع الصيانة
+function showSystemMaintenanceModal() {
+    const modal = new bootstrap.Modal(document.getElementById('maintenanceModal'));
+    modal.show();
+}
+
+async function enableMaintenanceMode() {
+    const data = {
+        message: document.getElementById('maintenanceMessage').value,
+        duration: parseInt(document.getElementById('maintenanceDuration').value),
+        allow_admin_access: document.getElementById('allowAdminAccess').checked
+    };
+    
+    try {
+        const response = await fetch('/api/admin/maintenance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.mafiaGame.showNotification('تم تفعيل وضع الصيانة', 'warning');
+            bootstrap.Modal.getInstance(document.getElementById('maintenanceModal')).hide();
+        } else {
+            window.mafiaGame.showNotification(result.message, 'danger');
+        }
+    } catch (error) {
+        window.mafiaGame.showNotification('خطأ في تفعيل وضع الصيانة', 'danger');
+    }
+}
+
+// تحديث لوحة الإدارة
+function refreshDashboard() {
+    window.mafiaGame.showNotification('جاري تحديث البيانات...', 'info', 2000);
+    loadDashboardData();
+}
+
+// دوال مساعدة
+function formatDuration(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    if (hours > 0) {
+        return `${hours}س ${minutes % 60}د`;
+    }
+    return `${minutes}د`;
+}
+
+function formatTimeAgo(dateString) {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diff = Math.floor((now - date) / 1000);
+    
+    if (diff < 60) return 'الآن';
+    if (diff < 3600) return `${Math.floor(diff / 60)} دقيقة`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} ساعة`;
+    return `${Math.floor(diff / 86400)} يوم`;
+}
+
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('ar-SA');
+}
+
+function formatTime(dateString) {
+    return new Date(dateString).toLocaleTimeString('ar-SA', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function getPhaseColor(phase) {
+    const colors = {
+        'waiting': 'secondary',
+        'night': 'dark',
+        'day': 'warning',
+        'vote': 'danger'
+    };
+    return colors[phase] || 'secondary';
+}
+
+function getPhaseText(phase) {
+    const texts = {
+        'waiting': 'انتظار',
+        'night': 'ليل',
+        'day': 'نهار',
+        'vote': 'تصويت'
+    };
+    return texts[phase] || phase;
+}
+
+function getReportTypeColor(type) {
+    const colors = {
+        'spam': 'warning',
+        'abuse': 'danger',
+        'cheating': 'danger',
+        'inappropriate': 'warning',
+        'bug': 'info'
+    };
+    return colors[type] || 'secondary';
+}
+
+function getReportTypeIcon(type) {
+    const icons = {
+        'spam': 'envelope',
+        'abuse': 'exclamation-triangle',
+        'cheating': 'ban',
+        'inappropriate': 'flag',
+        'bug': 'bug'
+    };
+    return icons[type] || 'flag';
+}
+
+// دوال إدارة المستخدمين والألعاب - يمكن تطويرها لاحقاً
+function banUser() {
+    // تنفيذ حظر المستخدم
+    console.log('حظر المستخدم:', currentUserId);
+}
+
+function unbanUser() {
+    // تنفيذ إلغاء حظر المستخدم
+    console.log('إلغاء حظر المستخدم:', currentUserId);
+}
+
+function deleteUser() {
+    // تنفيذ حذف المستخدم
+    if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+        console.log('حذف المستخدم:', currentUserId);
+    }
+}
+
+function viewGame(roomCode) {
+    window.open(`/game/${roomCode}`, '_blank');
+}
+
+function pauseGame(roomCode) {
+    console.log('إيقاف اللعبة:', roomCode);
+}
+
+function endGame(roomCode) {
+    if (confirm('هل أنت متأكد من إنهاء هذه اللعبة؟')) {
+        console.log('إنهاء اللعبة:', roomCode);
+    }
+}
+
+function searchUsers() {
+    const query = document.getElementById('userSearchInput').value;
+    console.log('البحث عن المستخدمين:', query);
+}
+
+function exportSystemLogs() {
+    console.log('تصدير السجلات');
+}
+
+function clearCacheData() {
+    if (confirm('هل أنت متأكد من مسح الذاكرة المؤقتة؟')) {
+        console.log('مسح الذاكرة المؤقتة');
+    }
+}
+
+function showBackupModal() {
+    console.log('إظهار modal النسخ الاحتياطي');
+}
+
+function showSystemStatus() {
+    console.log('إظهار حالة النظام');
+}
+
+function showAllReports() {
+    console.log('إظهار جميع البلاغات');
+}
+</script>
+{% endblock %}
